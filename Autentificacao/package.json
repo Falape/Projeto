@@ -1,0 +1,11 @@
+{
+  "name": "servidor-autentificacao",
+  "version": "1.0.0",
+  "description": "Servidor para a autentificação dos utilizadores da RRD",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm start"
+  },
+  "author": "Filipe Fernandes",
+  "license": "ISC"
+}
