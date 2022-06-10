@@ -4,21 +4,66 @@ var mongoose = require("mongoose");
 //OBTER RECURSOS
 
 //agregação com os users para aparecer o nome do user e não o id
+//Obtem recursos com estão como publicos
 module.exports.getAllPublic = () => {
     return Recurso
-        .find({public:{$eq: true}})
+        .find({public:{$eq: true}, deleted: {$eq: false}})
         .sort({data:1})
         .exec()
 }
 
 //agregação com os users para aparecer o nome do user e não o id
+//Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista)
 module.exports.getAllFollow = listaUsers => {
     return Recurso
-        .find({user:{$in: listaUsers}})
+        .find({user:{$in: listaUsers}, deleted: {$eq: false}})
         .sort({data:1})
         .exec()
 }
 
+//agregação com os users para aparecer o nome do user e não o id
+//Obtem recursos com estão como publicos e têm tipo
+module.exports.getAllPublicWithTipo = tipo => {
+    return Recurso
+        .find({public:{$eq: true}, deleted: {$eq: false}, tipo:tipo})
+        .sort({data:1})
+        .exec()
+}
+
+//agregação com os users para aparecer o nome do user e não o id
+//Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista) e com determinado tipo
+module.exports.getAllFollowWithTipo = (listaUsers,tipo) => {
+    return Recurso
+        .find({user:{$in: listaUsers}, deleted: {$eq: false}, tipo:tipo})
+        .sort({data:1})
+        .exec()
+}
+
+//agregação com os users para aparecer o nome do user e não o id
+//Obtem recursos com estão como publicos e e com determinado nome no título
+module.exports.getAllPublicWithName = (tipo,nome) => {
+    return Recurso
+        .find({public:{$eq: true}, 
+            deleted: {$eq: false}, 
+            title: {$regex : nome, $options: i},
+            tipo:tipo})
+        .sort({data:1})
+        .exec()
+}
+
+//agregação com os users para aparecer o nome do user e não o id
+//Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista) e com determinado nome no título
+module.exports.getAllFollowWithName = (listaUsers,tipo,nome) => {
+    return Recurso
+        .find({user:{$in: listaUsers}, 
+            deleted: {$eq: false},
+            title: {$regex : nome, $options: i},
+            tipo:tipo})
+        .sort({data:1})
+        .exec()
+}
+
+//recursos pelo seu tipo
 
 //agregação com os comentários para obter os comentários que por sua vez 
 //tem de ser agregado com os users para obter os nomes dos user

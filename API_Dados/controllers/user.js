@@ -3,20 +3,36 @@ var mongoose = require("mongoose");
 
 module.exports.getAllUsers = () => {
     return User
-        .findOne()  //mongoose.Types.ObjectId(id)
+        .find()  //mongoose.Types.ObjectId(id)
         .exec()
 }
 
 
 module.exports.getUser = id => {
     return User
-        .findOne({_id: id})  //mongoose.Types.ObjectId(id)
+        .findOne({_id: id})
         .exec()
 }
 
+//Procura users que contenham o nome
+module.exports.getUserByName = nome => {
+    return User
+        .find({username: {$regex : nome, $options: i}})
+        .exec()
+}
+
+//Procura users com o livel
+module.exports.getUserBylvl = lvl => {
+    return User
+        .find({level: lvl})
+        .exec()
+}
+
+//devolve seguidores
+//Talvez fazer agregação para já obter o id, nome e pathImagem
 module.exports.getFollowing = id => {
     return User
-        .findOne({_id: id},{followers:1})  //mongoose.Types.ObjectId(id)
+        .findOne({_id: id},{followers:1})
         .exec()
 }
 
@@ -24,7 +40,7 @@ module.exports.getFollowing = id => {
 //preciso ir a todos os users ver se estão a dar follow no id dado
 module.exports.getFollwers = id => {
     return User
-        .findOne({_id: id})  //mongoose.Types.ObjectId(id)
+        .findOne({_id: id})
         .exec()
 }
 
@@ -33,7 +49,7 @@ module.exports.getFollwers = id => {
 module.exports.alterarImagem = (id,path) =>{
     console.log("string")
     return User
-        .updateOne({ _id:  id},{image:path});  //mongoose.Types.ObjectId(id)
+        .updateOne({ _id:  id},{image:path});
 }
 
 module.exports.alterarDescricao = (id,desc) =>{
@@ -67,5 +83,5 @@ module.exports.addFollower = (id,followers) =>{
 //remove remove ou manter?
 module.exports.removeUser = id =>{
     return User
-        .deleteOne({ _id:  id});  //mongoose.Types.ObjectId(id)
+        .deleteOne({ _id:  id});
 }

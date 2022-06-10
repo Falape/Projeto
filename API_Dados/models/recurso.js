@@ -6,6 +6,7 @@ var RecursoSchema = new mongoose.Schema({
     author: String,
     user: { type: String, required: true },
     data: { type: String, required: true },
+    tipo: { type: String, required: true },
     public: Boolean,
     classificacao: String, //Ver melhor pois assim não dá para fazer média de resultados
     //comentarios: String,
