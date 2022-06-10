@@ -1,3 +1,4 @@
+var express = require('express');
 var router = express.Router();
 const Comments = require('../controllers/comments')
 const Recurso = require('../controllers/recurso')
@@ -26,12 +27,6 @@ router.get('/', function (req, res, next) {
                     .catch(e => res.status(501).jsonp({ error: e }))
 });
 
-router.get('/:id', function (req, res, next) {
-    console.log(req.params.id)
-    User.getUser(req.params.id)
-        .then(dados => res.status(200).jsonp(dados))
-        .catch(e => res.status(501).jsonp({ error: e }))
-});
 
 router.post('/atualizaDescricao/:id', function (req, res, next) {
     console.log(req.body.descricao)
@@ -53,7 +48,7 @@ router.post('/atualizaImagem/:id', function (req, res, next) {
 router.post('/atualizalvl/:id', function (req, res, next) {
     console.log(req.body.level)
     console.log(req.params.id)
-    if (req.level == 'admin') {
+    if (req.user.level == 'admin') {
         User.alterarImagem(req.params.id, req.body.level)
             .then(dados => res.status(200).jsonp(dados))
             .catch(e => res.status(501).jsonp({ error: e }))
@@ -87,18 +82,10 @@ router.get('/unfollow/:id', function (req, res, next) {
         res.status(501).jsonp({ error: "Query String inválida" })
 });
 
-if (req.level == 'admin') {
-    User.alterarImagem(req.params.id, req.body.level)
-        .then(dados => res.status(200).jsonp(dados))
-        .catch(e => res.status(501).jsonp({ error: e }))
-} else {
-    res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
-}
-
 
 router.get('/remove/:id', function (req, res, next) {
     console.log(req.params.id)
-    if (req.level == 'admin') {
+    if (req.user.level == 'admin') {
         User.removeUser(req.params.id)
             .then(dados => res.status(200).jsonp(dados))
             .catch(e => res.status(501).jsonp({ error: e }))
@@ -107,6 +94,12 @@ router.get('/remove/:id', function (req, res, next) {
     }
 });
 
+router.get('/:id', function (req, res, next) {
+    console.log(req.params.id)
+    User.getUser(req.params.id)
+        .then(dados => res.status(200).jsonp(dados))
+        .catch(e => res.status(501).jsonp({ error: e }))
+});
 
 
 module.exports = router;

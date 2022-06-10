@@ -13,11 +13,13 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-var mongoDB = 'mongodb://127.0.0.1/RRD'
-mongoose.connect(mongoDB,{
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
+var mongoBD = 'mongodb://127.0.0.1:27017/RRD';
+mongoose.connect(mongoBD, {useNewUrlParser: true});
+var db = mongoose.connection;
+db.on('error', console.error.bind(console,'Erro de conexão ao MongoBD'));
+db.once('open', function() {
+  console.log("Conexão ao MongoBD realizada com sucesso!")
+})
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -33,6 +35,9 @@ app.use(function(req, res, next){
       next()
     } 
   })
+  if(req.body['token'] != undefined){
+    delete req.body['token']
+  }
 })
 
 
@@ -56,5 +61,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 module.exports = app;

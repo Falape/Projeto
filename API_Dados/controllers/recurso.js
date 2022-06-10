@@ -1,5 +1,7 @@
 var Recurso = require('../models/recurso')
+var User = require('../models/user')
 var mongoose = require("mongoose");
+const { remove } = require('../models/user');
 
 //OBTER RECURSOS
 
@@ -8,7 +10,7 @@ var mongoose = require("mongoose");
 module.exports.getAll = () => {
     return Recurso
         .find()
-        .sort({data:1})
+        .sort({ data: 1 })
         .exec()
 }
 
@@ -16,8 +18,8 @@ module.exports.getAll = () => {
 //Obtem todos os recursos
 module.exports.getAllDeleted = () => {
     return Recurso
-        .find({deleted: {$eq: true}})
-        .sort({data:1})
+        .find({ deleted: { $eq: true } })
+        .sort({ data: 1 })
         .exec()
 }
 
@@ -25,8 +27,8 @@ module.exports.getAllDeleted = () => {
 //Obtem todos os recursos
 module.exports.getAllNoDeleted = () => {
     return Recurso
-        .find({deleted: {$eq: false}})
-        .sort({data:1})
+        .find({ deleted: { $eq: false } })
+        .sort({ data: 1 })
         .exec()
 }
 
@@ -34,8 +36,8 @@ module.exports.getAllNoDeleted = () => {
 //Obtem recursos com estão como publicos
 module.exports.getAllPublic = () => {
     return Recurso
-        .find({public:{$eq: true}, deleted: {$eq: false}})
-        .sort({data:1})
+        .find({ public: { $eq: true }, deleted: { $eq: false } })
+        .sort({ data: 1 })
         .exec()
 }
 
@@ -44,69 +46,79 @@ module.exports.getAllPublic = () => {
 //Obtem recursos com estão como publicos e têm tipo
 module.exports.getAllPublicWithTipo = tipo => {
     return Recurso
-    .find({public:{$eq: true}, deleted: {$eq: false}, tipo:tipo})
-    .sort({data:1})
-    .exec()
+        .find({ public: { $eq: true }, deleted: { $eq: false }, tipo: tipo })
+        .sort({ data: 1 })
+        .exec()
 }
 
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos com estão como publicos e e com determinado nome no título
-module.exports.getAllPublicWithName = (nome) => {
+module.exports.getAllPublicWithName = nome => {
+    console.log('entra')
+    var reg = new RegExp(nome, 'i')
     return Recurso
-    .find({public:{$eq: true}, 
-        deleted: {$eq: false}, 
-        title: {$regex : nome, $options: i}})
-        .sort({data:1})
+        .find({
+            public: { $eq: true },
+            deleted: { $eq: false },
+            title:reg
+        })
+        //.sort({ data: 1 })
         .exec()
 }
 
-module.exports.getAllPublicWithNameAndTipo = (tipo,nome) => {
+module.exports.getAllPublicWithNameAndTipo = (tipo, nome) => {
     return Recurso
-    .find({public:{$eq: true}, 
-        deleted: {$eq: false}, 
-        title: {$regex : nome, $options: i},
-        tipo:tipo})
-        .sort({data:1})
+        .find({
+            public: { $eq: true },
+            deleted: { $eq: false },
+            title: { $regex: nome, $options: i },
+            tipo: tipo
+        })
+        .sort({ data: 1 })
         .exec()
 }
-    
+
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista)
 module.exports.getAllFollow = listaUsers => {
     return Recurso
-        .find({user:{$in: listaUsers}, deleted: {$eq: false}})
-        .sort({data:1})
+        .find({ user: { $in: listaUsers }, deleted: { $eq: false } })
+        .sort({ data: 1 })
         .exec()
 }
-    //agregação com os users para aparecer o nome do user e não o id
+//agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista) e com determinado tipo
-module.exports.getAllFollowWithTipo = (listaUsers,tipo) => {
+module.exports.getAllFollowWithTipo = (listaUsers, tipo) => {
     return Recurso
-        .find({user:{$in: listaUsers}, deleted: {$eq: false}, tipo:tipo})
-        .sort({data:1})
+        .find({ user: { $in: listaUsers }, deleted: { $eq: false }, tipo: tipo })
+        .sort({ data: 1 })
         .exec()
 }
 
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista) e com determinado nome no título
-module.exports.getAllFollowWithName = (listaUsers,nome) => {
+module.exports.getAllFollowWithName = (listaUsers, nome) => {
     return Recurso
-        .find({user:{$in: listaUsers}, 
-            deleted: {$eq: false},
-            title: {$regex : nome, $options: i}})
-        .sort({data:1})
+        .find({
+            user: { $in: listaUsers },
+            deleted: { $eq: false },
+            title: { $regex: nome, $options: i }
+        })
+        .sort({ data: 1 })
         .exec()
 }
 
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista) e com determinado nome no título
-module.exports.getAllFollowWithNameAndTipo = (listaUsers,tipo,nome) => {
+module.exports.getAllFollowWithNameAndTipo = (listaUsers, tipo, nome) => {
     return Recurso
-        .find({user:{$in: listaUsers}, 
-            deleted: {$eq: false},
-            title: {$regex : nome, $options: i},
-            tipo:tipo})
-        .sort({data:1})
+        .find({
+            user: { $in: listaUsers },
+            deleted: { $eq: false },
+            title: { $regex: nome, $options: i },
+            tipo: tipo
+        })
+        .sort({ data: 1 })
         .exec()
 }
 
@@ -117,43 +129,56 @@ module.exports.getAllFollowWithNameAndTipo = (listaUsers,tipo,nome) => {
 //OUTRA SOLUÇÃO: fazer um pedido depois deste para obter os comentários, 
 //na mesma é preciso fazer agregação com os users para obter o nome do user 
 //que adicionou
-module.exports.getRecurso = id => {
+module.exports.getRecursoAgr = id => {
     return Recurso
-        .find({_id:id})
+        .find({ _id: id })
         .exec()
 }
 
+module.exports.getRecurso = id => {
+    return Recurso
+        .find({ _id: id })
+        .exec()
+}
 
 //EDITAR RECURSOS
-module.exports.alterarPublicoProvato = (id,estado) =>{
-    console.log("string")
-    return Comments
-        .updateOne({ _id:  id},{public:estado});  //mongoose.Types.ObjectId(id)
+module.exports.alterarPublicoPrivato = (id, estado) => {
+    return Recurso
+        .updateOne({ _id: id }, { public: estado });  //mongoose.Types.ObjectId(id)
 }
 
 //Alterar título
-module.exports.alterarTitle = (id,titulo) =>{
-    console.log("string")
-    return Comments
-        .updateOne({ _id:  id},{title:titulo});  //mongoose.Types.ObjectId(id)
+module.exports.alterarTitle = (id, titulo) => {
+    return Recurso
+        .updateOne({ _id: id }, { title: titulo });  //mongoose.Types.ObjectId(id)
 }
 
 //Alterar Author
-module.exports.alterarAuthor = (id,author) =>{
-    console.log("string")
-    return Comments
-        .updateOne({ _id:  id},{author:author});  //mongoose.Types.ObjectId(id)
+module.exports.alterarAuthor = (id, author) => {
+    return Recurso
+        .updateOne({ _id: id }, { author: author });  //mongoose.Types.ObjectId(id)
+}
+
+//ADICIONAR RECURSOS
+module.exports.inserir = recurso => {
+    console.log("aqui")
+    var data = new Date()
+    recurso.data = data.toISOString().substring(0, 16)
+    recurso.deleted=false
+    var newRecurso = new Recurso(recurso)
+    console.log(newRecurso)
+
+    return newRecurso.save()
 }
 
 
 //APAGAR RECURSOS
 
 //não se apagam dados :) apenas não os mostramos ;)
-module.exports.removeRecurso = (id,user) =>{
-    console.log("string")
+module.exports.removeRecurso = (id, user) => {
     var data = new Date()
-    return Comments
-        .updateOne({ _id:  id},{deleted:true, deleteDate:data.toISOString().substring(0,16), deleteUser:user});  //mongoose.Types.ObjectId(id)
+    return Recurso
+        .updateOne({ _id: id }, { deleted: true, deleteDate: data.toISOString().substring(0, 16), deleteUser: user });  //mongoose.Types.ObjectId(id)
 }
 
 

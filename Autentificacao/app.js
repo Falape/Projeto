@@ -9,7 +9,14 @@ var express = require("express"),
 var logger = require('morgan');
 
 
-mongoose.connect("mongodb://localhost:27017/RRD", { useNewUrlParser: true });
+var mongoBD = 'mongodb://127.0.0.1/RRD';
+mongoose.connect(mongoBD, {useNewUrlParser: true});
+var db = mongoose.connection;
+db.on('error', console.error.bind(console,'Erro de conexão ao MongoBD'));
+db.once('open', function() {
+  console.log("Conexão ao MongoBD realizada com sucesso!")
+})
+
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ type: 'application/json' }));
@@ -36,7 +43,7 @@ app.post("/registo", function (req, res) {
     if (err) {
       console.log(err);
       return res.status(400).jsonp({
-        message: 'User já existe!', user: user
+        message: 'Erro no registo', user: user
       });
     }
     passport.authenticate('local', { session: false }, (err, user, info) => {
@@ -77,7 +84,7 @@ app.post("/login", function (req, res) {
       }
       // generate a signed son web token with the contents of user object and return it in the response
       jwt.sign({ _id:user._id, level: user.level, username: user.username}, 'O Ramalho e fixe',
-                {expiresIn: '10m'}, 
+                {expiresIn: '50m'}, 
                 function(e, token){
                   if(e) res.status(507).jsonp({error:"Erro na geração de token"})
                   else res.status(201).jsonp({token:token})
