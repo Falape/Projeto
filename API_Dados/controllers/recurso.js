@@ -1,4 +1,5 @@
 var Recurso = require('../models/recurso')
+var mongoose = require("mongoose");
 
 //OBTER RECURSOS
 

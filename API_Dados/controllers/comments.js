@@ -1,4 +1,5 @@
 var Comments = require('../models/comments')
+var mongoose = require("mongoose");
 
 //fazer agregação com os users para obter o nome 
 //do user em vez do id
