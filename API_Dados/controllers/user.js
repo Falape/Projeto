@@ -28,6 +28,13 @@ module.exports.getUserBylvl = lvl => {
         .exec()
 }
 
+//Procura users que contenham o nome e o lvl
+module.exports.getUserByNameAndlvl = (nome,lvl) => {
+    return User
+        .find({username: {$regex : nome, $options: i}, level: lvl})
+        .exec()
+}
+
 //devolve seguidores
 //Talvez fazer agregação para já obter o id, nome e pathImagem
 module.exports.getFollowing = id => {

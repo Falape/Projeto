@@ -50,7 +50,7 @@ app.post("/registo", function (req, res) {
           return res.status(500).jsonp({error:"Erro no login"})
         }
         // generate a signed son web token with the contents of user object and return it in the response
-        jwt.sign({ _id:user._id}, 'O Ramalho e fixe',
+        jwt.sign({ _id:user._id, level: user.level, username: user.username}, 'O Ramalho e fixe',
                 {expiresIn: '10m'}, 
                 function(e, token){
                   if(e) res.status(507).jsonp({error:"Erro na geração de token"})
@@ -76,7 +76,7 @@ app.post("/login", function (req, res) {
         return res.status(500).jsonp({error:"Erro no login"});
       }
       // generate a signed son web token with the contents of user object and return it in the response
-      jwt.sign({ _id:user._id}, 'O Ramalho e fixe',
+      jwt.sign({ _id:user._id, level: user.level, username: user.username}, 'O Ramalho e fixe',
                 {expiresIn: '10m'}, 
                 function(e, token){
                   if(e) res.status(507).jsonp({error:"Erro na geração de token"})
