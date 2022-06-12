@@ -27,7 +27,31 @@ module.exports.getAllDeleted = () => {
 //Obtem todos os recursos
 module.exports.getAllNoDeleted = () => {
     return Recurso
-        .find({ deleted: { $eq: false } })
+    .find({ deleted: { $eq: false } })
+    .sort({ data: 1 })
+    .exec()
+}
+
+
+//obtem todos os recursos que um user publicou 
+module.exports.getMyRec = id => {
+    return Recurso
+        .find({user:id})
+        .sort({ data: 1 })
+        .exec()
+}
+
+module.exports.getRecFromUser = id => {
+    return Recurso
+        .find({user:id, deleted: { $eq: false }})
+        .sort({ data: 1 })
+        .exec()
+}
+
+//obtem todos os recursos publicos que um user publicou 
+module.exports.getRecFromUserPublic = id => {
+    return Recurso
+        .find({user:id,  public: { $eq: true }, deleted: { $eq: false }})
         .sort({ data: 1 })
         .exec()
 }
@@ -62,7 +86,7 @@ module.exports.getAllPublicWithName = nome => {
             deleted: { $eq: false },
             title:reg
         })
-        //.sort({ data: 1 })
+        .sort({ data: 1 })
         .exec()
 }
 
@@ -135,6 +159,7 @@ module.exports.getRecursoAgr = id => {
         .exec()
 }
 
+//recurso em bruto, como está com ids
 module.exports.getRecurso = id => {
     return Recurso
         .find({ _id: id })
@@ -181,4 +206,8 @@ module.exports.removeRecurso = (id, user) => {
         .updateOne({ _id: id }, { deleted: true, deleteDate: data.toISOString().substring(0, 16), deleteUser: user });  //mongoose.Types.ObjectId(id)
 }
 
-
+//recupera recurso
+module.exports.recuperaRecurso = (id) => {
+    return Recurso
+        .updateOne({ _id: id }, { deleted: false, deleteDate: '', deleteUser: '' });  //mongoose.Types.ObjectId(id)
+}

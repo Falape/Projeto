@@ -2,10 +2,11 @@ var express = require('express');
 var router = express.Router();
 const Comments = require('../controllers/comments')
 const Recurso = require('../controllers/recurso')
-const User = require('../controllers/user')
+const User = require('../controllers/user');
+const user = require('../models/user');
 
 //Get all users
-router.get('/', function (req, res, next) {
+router.get('/', function (req, res) {
     console.log(req.query)
     if (req.query['lvl'] != undefined && req.query['nome'] != undefined) { //com filtro para o nome e lvl
         User.getUserByNameAndlvl(req.query['nome'], req.query['lvl'])
@@ -28,28 +29,46 @@ router.get('/', function (req, res, next) {
 });
 
 
-router.post('/atualizaDescricao/:id', function (req, res, next) {
+//recebo o id de quem é para alterar a descrição, se o id for igual ao do user a tentar alterar 
+//pode ou então apenas o admin pode
+router.post('/atualizaDescricao/:id', function (req, res) {
     console.log(req.body.descricao)
     console.log(req.params.id)
-    User.alterarDescricao(req.params.id, req.body.descricao)
-        .then(dados => res.status(200).jsonp(dados))
+    User.getUser(req.params.id)
+        .then(dados => {
+            if (dados._id == req.params.id || req.user.level == 'admin') {
+                User.alterarDescricao(req.params.id, req.body.descricao)
+                    .then(dadosRec => res.status(200).jsonp(dadosRec))
+                    .catch(e => res.status(501).jsonp({ error: e }))
+            }
+        })
         .catch(e => res.status(501).jsonp({ error: e }))
+
 });
 
-//LEVA TRATAMENTO ESPECIAL
-router.post('/atualizaImagem/:id', function (req, res, next) {
+//recebo o id de quem é para alterar o path da imagem, se o id for igual ao do user a tentar alterar 
+//pode ou então apenas o admin pode
+router.post('/atualizaImagem/:id', function (req, res) {
     console.log(req.body.pathImage)
     console.log(req.params.id)
-    User.alterarImagem(req.params.id, req.body.pathImage)
-        .then(dados => res.status(200).jsonp(dados))
+    User.getUser(req.params.id)
+        .then(dados => {
+            if (dados._id == req.params.id || req.user.level == 'admin') {
+                User.alterarImagem(req.params.id, req.body.pathImage)
+                    .then(dadosRec => res.status(200).jsonp(dadosRec))
+                    .catch(e => res.status(501).jsonp({ error: e }))
+            }
+        })
         .catch(e => res.status(501).jsonp({ error: e }))
 });
 
-router.post('/atualizalvl/:id', function (req, res, next) {
+
+//ADMIN: apenas o admin pode alterar o lvl de um user
+router.post('/atualizalvl/:id', function (req, res) {
     console.log(req.body.level)
     console.log(req.params.id)
     if (req.user.level == 'admin') {
-        User.alterarImagem(req.params.id, req.body.level)
+        User.alterarLevel(req.params.id, req.body.level)
             .then(dados => res.status(200).jsonp(dados))
             .catch(e => res.status(501).jsonp({ error: e }))
     } else {
@@ -58,32 +77,41 @@ router.post('/atualizalvl/:id', function (req, res, next) {
 });
 
 
-//penso que vou trocar para um post com a info no body
-router.get('/addFollower/:id', function (req, res, next) {
-    if (req.query['follow'] != undefined) {
-        console.log(req.query.follow)
-        console.log(req.params.id)
-        User.addFollower(req.params.id, req.body.follow)
-            .then(dados => res.status(200).jsonp(dados))
-            .catch(e => res.status(501).jsonp({ error: e }))
-    } else
-        res.status(501).jsonp({ error: "Query String inválida" })
+//adiciona um follower
+router.get('/addFollower/:id', function (req, res) {
+    console.log(req.params.id)
+    User.addFollower(req.user._id, req.params.id)
+        .then(dados => res.status(200).jsonp(dados))
+        .catch(e => res.status(501).jsonp({ error: e }))
 });
 
-//penso que vou trocar para um post com a info no body
-router.get('/unfollow/:id', function (req, res, next) {
-    if (req.query['follow'] != undefined) {
-        console.log(req.query.follow)
-        console.log(req.params.id)
-        User.addFollower(req.params.id, req.body.follow)
-            .then(dados => res.status(200).jsonp(dados))
-            .catch(e => res.status(501).jsonp({ error: e }))
-    } else
-        res.status(501).jsonp({ error: "Query String inválida" })
+//remove um follower
+router.get('/unFollow/:id', function (req, res) {
+    console.log(req.params.id)
+    console.log(req.user._id)
+    User.getUser(req.user._id)
+        .then(dados => {
+            foll = dados.followers
+            console.log(foll.includes('62a393fc687b7fdc72e9f26f'))
+            console.log("morre aqui")
+            if (dados.followers.includes(req.params.id)) {
+                console.log('entra')
+                ind = foll.indexOf(req.params.id)
+                console.log(ind) 
+
+                foll.splice(ind, 1)
+                console.log(foll)
+                User.unFollower(req.user._id, foll)
+                    .then(dadosRec => res.status(200).jsonp(dadosRec))
+                    .catch(e => res.status(501).jsonp({ error: e }))
+            }
+            res.status(401).jsonp({ error: "Utilizador não existe!" })
+        })
+        .catch(e => res.status(501).jsonp({ error: e }))
 });
 
 
-router.get('/remove/:id', function (req, res, next) {
+router.get('/remove/:id', function (req, res) {
     console.log(req.params.id)
     if (req.user.level == 'admin') {
         User.removeUser(req.params.id)
@@ -94,7 +122,7 @@ router.get('/remove/:id', function (req, res, next) {
     }
 });
 
-router.get('/:id', function (req, res, next) {
+router.get('/:id', function (req, res) {
     console.log(req.params.id)
     User.getUser(req.params.id)
         .then(dados => res.status(200).jsonp(dados))

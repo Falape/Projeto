@@ -78,9 +78,10 @@ module.exports.addFollower = (id,follower) =>{
         .updateOne({ _id:  id},{ $addToSet: {followers: follower}}); 
 }
 
-//update fulll list of followers
-module.exports.addFollower = (id,followers) =>{
+//update fulll list of followers FAZER
+module.exports.unFollower = (id,followers) =>{
     console.log("string")
+    console.log(followers)
     return User
         .updateOne({ _id:  id},{followers: followers}); 
 }
