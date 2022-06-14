@@ -6,7 +6,8 @@ var CommentsSchema = new mongoose.Schema({
     data: String,
     deleted: Boolean,
     deleteDate : String,
-    //Editar comentários
+    deleteUser : String,
+    //Editar comentários fututo
     comentario: String
 });
 

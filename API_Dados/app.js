@@ -9,6 +9,7 @@ var bodyParser = require("body-parser");
 
 var recursoRouter = require('./routes/recursos');
 var usersRouter = require('./routes/users');
+var commentsRouter = require('./routes/comments');
 
 
 var app = express();
@@ -43,6 +44,7 @@ app.use(function(req, res, next){
 
 app.use('/recursos', recursoRouter);
 app.use('/users', usersRouter);
+app.use('/comments', commentsRouter)
 
 
 

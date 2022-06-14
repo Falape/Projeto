@@ -1,7 +1,5 @@
 var Recurso = require('../models/recurso')
-var User = require('../models/user')
 var mongoose = require("mongoose");
-const { remove } = require('../models/user');
 
 //OBTER RECURSOS
 
@@ -169,19 +167,19 @@ module.exports.getRecurso = id => {
 //EDITAR RECURSOS
 module.exports.alterarPublicoPrivato = (id, estado) => {
     return Recurso
-        .updateOne({ _id: id }, { public: estado });  //mongoose.Types.ObjectId(id)
+        .updateOne({ _id: id, deleted: { $eq: false }}, { public: estado });  //mongoose.Types.ObjectId(id)
 }
 
 //Alterar título
 module.exports.alterarTitle = (id, titulo) => {
     return Recurso
-        .updateOne({ _id: id }, { title: titulo });  //mongoose.Types.ObjectId(id)
+        .updateOne({ _id: id, deleted: { $eq: false } }, { title: titulo });  //mongoose.Types.ObjectId(id)
 }
 
 //Alterar Author
 module.exports.alterarAuthor = (id, author) => {
     return Recurso
-        .updateOne({ _id: id }, { author: author });  //mongoose.Types.ObjectId(id)
+        .updateOne({ _id: id, deleted: { $eq: false } }, { author: author });  //mongoose.Types.ObjectId(id)
 }
 
 //ADICIONAR RECURSOS

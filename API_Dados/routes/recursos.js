@@ -27,9 +27,8 @@ router.post('/', function (req, res) {
       console.log("saiu")//req.body)
     })
     .catch(e => {
-      res.status(501).jsonp({ erro: "erro :(" })
+      res.status(501).jsonp({ erro: e })
     })
-  //res.render('index', { title: 'Express' });
 });
 
 
@@ -57,7 +56,7 @@ router.get('/noDeleted', function (req, res) {
 
 //Utilizador vẽs os seu recursos
 router.get('/getMyRec', function (req, res) {
-  Recurso.getMyRec09(req.user._id)
+  Recurso.getMyRec(req.user._id)
     .then(dados => res.status(200).jsonp(dados))
     .catch(e => res.status(501).jsonp({ error: e }))
 });
@@ -146,7 +145,8 @@ router.get('/following', function (req, res) {
 
 });
 
-//vai depender um pouco de como vai estar no html
+//altera o estado true == public false == private, vai no body
+//apenas quem criou ou o admin pode alterar
 router.post('/alteraEstado/:id', function (req, res) {
   console.log(req.params.id)
   Recurso.getRecurso(req.params.id)
@@ -161,6 +161,8 @@ router.post('/alteraEstado/:id', function (req, res) {
     .catch(e => res.status(501).jsonp({ error: e }))
 });
 
+//alterar o Título do trabalho
+//apenas quem criou ou o admin pode alterar
 router.post('/alteraTitulo/:id', function (req, res) {
   console.log(req.params.id)
   console.log(req.body.title)
@@ -177,6 +179,8 @@ router.post('/alteraTitulo/:id', function (req, res) {
     .catch(e => res.status(501).jsonp({ error: e }))
 })
 
+//alterar o author
+//apenas quem criou ou o admin pode alterar
 router.post('/alteraAuthor/:id', function (req, res) {
   console.log(req.params.id)
   console.log(req.body.author)
@@ -192,6 +196,9 @@ router.post('/alteraAuthor/:id', function (req, res) {
     .catch(e => res.status(501).jsonp({ error: e }))
 });
 
+
+//remove um conteudo
+//apenas quem criou ou o admin o pode fazer
 router.get('/remove/:id', function (req, res) {
   console.log(req.params.id)
   Recurso.getRecurso(req.params.id)
@@ -208,6 +215,10 @@ router.get('/remove/:id', function (req, res) {
     .catch(e => res.status(501).jsonp({ error: e }))
 });
 
+
+//recupera um conteúdo
+//se for um user a remover este pode recuperar se for o admin apenas 
+//um admin pode recuperar
 router.get('/recupera/:id', function (req, res) {
   console.log(req.params.id)
   Recurso.getRecurso(req.params.id)
