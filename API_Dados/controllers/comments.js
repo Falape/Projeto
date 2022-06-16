@@ -13,7 +13,7 @@ module.exports.inserir = comment => {
 }
 
 //fazer agregação com os users para obter o nome 
-//do user em vez do id
+//do user e manter o seu id
 module.exports.GetComment = id => {
     return Comments
         .find({_id:id})
@@ -25,7 +25,7 @@ module.exports.GetComment = id => {
 
 
 //fazer agregação com os users para obter o nome 
-//do user em vez do id
+//do user e manter o seu id
 module.exports.GetCommentsRecurso = id => {
     return Comments
         .find({recurso:id, deleted: { $eq: false } })
@@ -51,7 +51,7 @@ module.exports.GetNumberOfcommentsRecurso = id => {
 
 
 //fazer agregação com os users para obter o nome 
-//do user em vez do id
+//do user e manter o seu id
 module.exports.GetCommentsRecurso = id => {
     return Comments
         .find({recurso:id, deleted: { $eq: false }})

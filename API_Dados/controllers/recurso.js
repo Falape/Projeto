@@ -184,12 +184,10 @@ module.exports.alterarAuthor = (id, author) => {
 
 //ADICIONAR RECURSOS
 module.exports.inserir = recurso => {
-    console.log("aqui")
     var data = new Date()
     recurso.data = data.toISOString().substring(0, 16)
     recurso.deleted=false
     var newRecurso = new Recurso(recurso)
-    console.log(newRecurso)
 
     return newRecurso.save()
 }

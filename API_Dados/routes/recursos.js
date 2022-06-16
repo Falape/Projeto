@@ -5,7 +5,7 @@ const Recurso = require('../controllers/recurso')
 const User = require('../controllers/user')
 
 //funciona
-// ver todo tipo de publicações, apenas admin
+//ADMIN:ver todo tipo de publicações, apenas admin
 router.get('/', function (req, res) {
   if (req.user.level == 'admin') {
     Recurso.getAll()
@@ -21,6 +21,7 @@ router.get('/', function (req, res) {
 router.post('/', function (req, res) {
   console.log("entra no post com o res: ");
   console.log(req.body)
+
   Recurso.inserir(req.body)
     .then(dados => {
       res.status(201).jsonp(dados);
@@ -71,14 +72,14 @@ router.get('/userRecurso/:id', function (req, res) {
         Recurso.getRecFromUser(req.user._id)
           .then(dados => res.status(200).jsonp(dados))
           .catch(e => res.status(501).jsonp({ error: e }))
-      }else{
+      } else {
         Recurso.getRecFromUserPublic(req.user._id)
           .then(dados => res.status(200).jsonp(dados))
           .catch(e => res.status(501).jsonp({ error: e }))
       }
 
     })
-  .catch(e => res.status(501).jsonp({ error: e }))
+    .catch(e => res.status(501).jsonp({ error: e }))
 });
 
 //recursos públicos
@@ -136,11 +137,14 @@ router.get('/following', function (req, res) {
               .catch(e => res.status(501).jsonp({ error: e })))
           .catch(e => res.status(502).jsonp({ error: e }))
       } else
+
         User.getFollowing(req.user._id)
-          .then(dados =>
-            Recurso.getAllFollow(dados)
+          .then(dados => {
+            console.log(dados)
+            Recurso.getAllFollow(dados.followers)
               .then(dadosRec => res.status(200).jsonp(dadosRec))
-              .catch(e => res.status(501).jsonp({ error: e })))
+              .catch(e => res.status(501).jsonp({ error: e }))
+          })
           .catch(e => res.status(502).jsonp({ error: e }))
 
 });
@@ -235,12 +239,14 @@ router.get('/recupera/:id', function (req, res) {
     .catch(e => res.status(501).jsonp({ error: e }))
 });
 
-
+//ADMIN pode ver um recurso pelo seu id(pode não vir a ter utilidade)
 router.get('/:id', function (req, res) {
-  console.log(req.params.id)
-  Recurso.getRecursoAgr(req.params.id)
-    .then(dados => res.status(200).jsonp(dados))
-    .catch(e => res.status(501).jsonp({ error: e }))
+  if (req.user.level == 'admin') {
+    Recurso.getRecursoAgr(req.params.id)
+      .then(dados => res.status(200).jsonp(dados))
+      .catch(e => res.status(501).jsonp({ error: e }))
+  }else
+  res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
 });
 
 

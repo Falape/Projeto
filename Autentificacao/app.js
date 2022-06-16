@@ -58,7 +58,7 @@ app.post("/registo", function (req, res) {
         }
         // generate a signed son web token with the contents of user object and return it in the response
         jwt.sign({ _id:user._id, level: user.level, username: user.username}, 'O Ramalho e fixe',
-                {expiresIn: '10m'}, 
+                {expiresIn: '50m'}, 
                 function(e, token){
                   if(e) res.status(507).jsonp({error:"Erro na geração de token"})
                   else res.status(201).jsonp({token:token})

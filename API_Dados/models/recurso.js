@@ -8,6 +8,8 @@ var RecursoSchema = new mongoose.Schema({
     tipo: { type: String, required: true },
     public: Boolean,
     classificacao: String, //Ver melhor pois assim não dá para fazer média de resultados
+    //nclassicacoes : Number.
+    //mediaclassificacao : Number
     //comentarios: String,
     deleted: Boolean,
     deleteDate : String,

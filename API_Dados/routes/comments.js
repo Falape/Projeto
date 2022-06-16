@@ -10,8 +10,8 @@ const User = require('../controllers/user')
 //no body
 router.post('/:id', function (req, res) {
     console.log("entra no post com o res: ");
-    req.body.user=req.user._id
-    req.body.recurso=req.params.id
+    req.body.user = req.user._id
+    req.body.recurso = req.params.id
     console.log(req.body)
     Comments.inserir(req.body)
         .then(dados => {
@@ -40,19 +40,17 @@ router.get('/recurso/:id', function (req, res) {
 });
 
 
-//VER peço recurso ams não preciso de pedir....
+//remove um comentário
 router.get('/remove/:id', function (req, res) {
     console.log(req.params.id)
-    Recurso.getRecurso(req.params.id)
+    Comments.GetComment(req.params.id)
         .then(dados => {
-            console.log(dados[0].user)
-            console.log(req.user._id)
-            if (dados[0].user == req.user._id || req.user.level == 'admin') {
-                Recurso.removeRecurso(req.params.id, req.user._id)
-                    .then(dados => res.status(200).jsonp(dados))
+            if (dados[0].user == req.user._id | req.user.level == 'admin') {
+                Comments.removeComment(req.body._id, req.params.id)
+                    .then(dadosR => res.status(200).jsonp(dadosR))
                     .catch(e => res.status(501).jsonp({ error: e }))
-            } else
-                res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
+            }else
+            res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
         })
         .catch(e => res.status(501).jsonp({ error: e }))
 });
