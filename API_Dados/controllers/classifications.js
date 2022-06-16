@@ -9,7 +9,7 @@ module.exports.getClassificacao = id => {
         .exec()
 }
 
-module.exports.getClassificacao = id => {
+module.exports.giveClassificacao = (id,classificacao,user) => {
     return Classificacao
         .find({recurso:id})
         .exec()
