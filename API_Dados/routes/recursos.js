@@ -24,6 +24,7 @@ router.post('/', function (req, res) {
 
   Recurso.inserir(req.body)
     .then(dados => {
+      //criar comentário já associado ao recurso
       res.status(201).jsonp(dados);
       console.log("saiu")//req.body)
     })
