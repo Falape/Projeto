@@ -17,7 +17,7 @@ router.post('/', function (req, res) {
   //console.log(req.body)
   axios.post('http://localhost:7001/login', req.body).then(function (dados) {
     //console.log(dados.data)
-    res.cookie('token', dados.data, {
+    res.cookie('data', dados.data, {
       //guardar os dados num cookie
       expires: new Date(Date.now() + '60m'),
       //validade
@@ -41,7 +41,7 @@ router.get('/registo', function (req, res) {
 router.post('/registo', function (req, res) {
   axios.post('http://localhost:7001/registo', req.body).then(function (dados) {
     console.log(dados.data);
-    res.cookie('token', dados.data, {
+    res.cookie('data', dados.data, {
       //guardar os dados num cookie
       expires: new Date(Date.now() + '60m'),
       //validade
@@ -59,11 +59,12 @@ router.post('/registo', function (req, res) {
 
 router.get('/inicio', function (req, res) {
   console.log("entra");
-  axios.post('http://localhost:7002/public', req.body).then(function (dados) {
-    console.log(req.cookies.userData);
+  console.log(req.cookies.data.token); //axios.post('http://localhost:7002/recursos?token='+ req.cookies.data.token)
+
+  axios.post('http://localhost:7002/recursos/public?token=' + req.cookies.data.token).then(function (dados) {
     console.log("guarda");
     res.render('public', {
-      user: req.cookies.userData
+      user: req.cookies.data.userData
     });
   })["catch"](function (e) {
     return res.render('error', {

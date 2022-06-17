@@ -86,29 +86,33 @@ router.get('/userRecurso/:id', function (req, res) {
 
 //recursos públicos
 router.post('/public', function (req, res) {
-  console.log(req.body)
-  if (req.body[0]['titulo'] != undefined && req.body[0]['tipo'] != undefined) { //com filtro para o nome e titulo
-    Recurso.getAllPublicWithNameAndTipo(req.body[0]['tipo'], req.body[0]['titulo'])
-      .then(dados => res.status(200).jsonp(dados))
-      .catch(e => res.status(501).jsonp({ error: e }))
-  } else
-    if (req.body[0]['titulo'] != undefined) { //com filtro para o titulo
-      console.log("filtro titulo ", req.body[0]['titulo'])
-      Recurso.getAllPublicWithName(req.body[0]['titulo'])
+  
+
+  if (Object.keys(req.body).length != 0) {
+    console.log("entra Public")
+    if (req.body[0]['titulo'] != undefined && req.body[0]['tipo'] != undefined) { //com filtro para o nome e titulo
+      Recurso.getAllPublicWithNameAndTipo(req.body[0]['tipo'], req.body[0]['titulo'])
         .then(dados => res.status(200).jsonp(dados))
         .catch(e => res.status(501).jsonp({ error: e }))
     } else
-      if (req.body[0]['tipo'] != undefined) { //com filtro para tipo
-        console.log("sem filtros")
-        Recurso.getAllPublicWithTipo(req.body[0]['tipo'])
+      if (req.body[0]['titulo'] != undefined) { //com filtro para o titulo
+        console.log("filtro titulo ", req.body[0]['titulo'])
+        Recurso.getAllPublicWithName(req.body[0]['titulo'])
           .then(dados => res.status(200).jsonp(dados))
           .catch(e => res.status(501).jsonp({ error: e }))
-      } else {
-        console.log("sem filtros")
-        Recurso.getAllPublic()
-          .then(dados => res.status(200).jsonp(dados))
-          .catch(e => res.status(501).jsonp({ error: e }))
-      }
+      } else
+        if (req.body[0]['tipo'] != undefined) { //com filtro para tipo
+          console.log("sem filtros")
+          Recurso.getAllPublicWithTipo(req.body[0]['tipo'])
+            .then(dados => res.status(200).jsonp(dados))
+            .catch(e => res.status(501).jsonp({ error: e }))
+        }
+  } else {
+    console.log("sem filtros")
+    Recurso.getAllPublic()
+      .then(dados => res.status(200).jsonp(dados))
+      .catch(e => res.status(501).jsonp({ error: e }))
+  }
 });
 
 
@@ -259,14 +263,14 @@ router.get('/recupera/:id', function (req, res) {
 });
 
 //ADMIN pode ver um recurso pelo seu id(pode não vir a ter utilidade)
-router.get('/:id', function (req, res) {
-  if (req.user.level == 'admin') {
-    Recurso.getRecursoAgr(req.params.id)
-      .then(dados => res.status(200).jsonp(dados))
-      .catch(e => res.status(501).jsonp({ error: e }))
-  } else
-    res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
-});
+// router.get('/:id', function (req, res) {
+//   if (req.user.level == 'admin') {
+//     Recurso.getRecursoAgr(req.params.id)
+//       .then(dados => res.status(200).jsonp(dados))
+//       .catch(e => res.status(501).jsonp({ error: e }))
+//   } else
+//     res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
+// });
 
 
 module.exports = router;

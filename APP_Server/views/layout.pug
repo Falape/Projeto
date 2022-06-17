@@ -5,18 +5,21 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
   nav
     h1 RRD - Repositório de Recursos Didáticos
-  nav 
-    button  
-      a(href='/inicio') Inicio
-    button  
-      a(href='/public') Publico
-    button  
-      a(href='/users') Utilizadores
-    button  
-      a(href='/recurso') Criar Recurso
   
-    img.UserNavBar(src = user.image onclick="window.location.href = 'http://localhost:7002/users/"+ user.id +"'")
-    h2= user.username 
-    h3= user.level
+    div.row
+      button  
+        a(href='/inicio') Inicio
+      button  
+        a(href='/public') Publico
+      button  
+        a(href='/users') Utilizadores
+      button  
+        a(href='/recurso') Criar Recurso
+
+      div.UserNavBar
+        img(src = user.image onclick="window.location.href = 'http://localhost:7002/users/"+ user.id +"'")
+        div.col
+          h3= user.username 
+          h4= user.level
   body
     block content

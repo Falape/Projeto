@@ -28,7 +28,9 @@ app.use(express.urlencoded({ extended: false }));
 
 
 app.use(function(req, res, next){
+  console.log("myToken")
   var myToken = req.query.token || req.body.token
+  console.log(myToken)
   jwt.verify(myToken, "O Ramalho e fixe", function(e, payload){
     if(e) res.status(401).jsonp({error: 'Erro na verificação do token: ' + e})
     else{
@@ -42,6 +44,7 @@ app.use(function(req, res, next){
 })
 
 
+console.log("chega aqui")
 app.use('/recursos', recursoRouter);
 app.use('/users', usersRouter);
 app.use('/comments', commentsRouter)
