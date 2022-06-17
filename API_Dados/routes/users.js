@@ -91,8 +91,6 @@ router.get('/unFollow/:id', function (req, res) {
     console.log(req.user._id)
     User.getUser(req.user._id)
         .then(dados => {
-            foll = dados.followers
-            console.log(foll.includes('62a393fc687b7fdc72e9f26f'))
             console.log("morre aqui")
             if (dados.followers.includes(req.params.id)) {
                 console.log('entra')
