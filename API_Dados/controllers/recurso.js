@@ -182,6 +182,7 @@ module.exports.getAllFollow = listaUsers => {
 }
 
 
+
 // DONE
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista) e com determinado tipo

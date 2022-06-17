@@ -58,10 +58,10 @@ app.post("/registo", function (req, res) {
         }
         // generate a signed son web token with the contents of user object and return it in the response
         jwt.sign({ _id:user._id, level: user.level, username: user.username}, 'O Ramalho e fixe',
-                {expiresIn: '50m'}, 
+                {expiresIn: '60m'}, 
                 function(e, token){
                   if(e) res.status(507).jsonp({error:"Erro na geração de token"})
-                  else res.status(201).jsonp({token:token})
+                  else res.status(201).jsonp({token:token, id:user._id, level:user.level, username: user.username})
         });
       });
     })(req, res);
@@ -71,7 +71,7 @@ app.post("/registo", function (req, res) {
 // Login Logic
 // middleware
 app.post("/login", function (req, res) {
-
+  console.log('entra aqui')
   passport.authenticate('local', { session: false }, (err, user, info) => {
     if (err || !user) {
       return res.status(400).json({
@@ -84,10 +84,10 @@ app.post("/login", function (req, res) {
       }
       // generate a signed son web token with the contents of user object and return it in the response
       jwt.sign({ _id:user._id, level: user.level, username: user.username}, 'O Ramalho e fixe',
-                {expiresIn: '50m'}, 
+                {expiresIn: '60m'}, 
                 function(e, token){
                   if(e) res.status(507).jsonp({error:"Erro na geração de token"})
-                  else res.status(201).jsonp({token:token})
+                  else res.status(201).jsonp({token:token,  id:user._id,level:user.level, username: user.username})
         });
     });
   })(req, res);

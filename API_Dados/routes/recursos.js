@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const Comments = require('../controllers/comments')
 const Recurso = require('../controllers/recurso')
+const Classificacao = require('../controllers/classifications')
 const User = require('../controllers/user')
 
 //funciona
@@ -24,8 +25,9 @@ router.post('/', function (req, res) {
 
   Recurso.inserir(req.body)
     .then(dados => {
-      res.status(201).jsonp(dados);
-      console.log("saiu")//req.body)
+      Classificacao.inserir(dados._id)
+        .then(dados => res.status(200).jsonp(dados))
+        .catch(e => res.status(501).jsonp({ error: e }))
     })
     .catch(e => {
       res.status(501).jsonp({ erro: e })
@@ -83,22 +85,22 @@ router.get('/userRecurso/:id', function (req, res) {
 });
 
 //recursos públicos
-router.get('/public', function (req, res) {
-  console.log(req.query)
-  if (req.query['titulo'] != undefined && req.query['tipo'] != undefined) { //com filtro para o nome e titulo
-    Recurso.getAllPublicWithNameAndTipo(req.query['tipo'], req.query['titulo'])
+router.post('/public', function (req, res) {
+  console.log(req.body)
+  if (req.body[0]['titulo'] != undefined && req.body[0]['tipo'] != undefined) { //com filtro para o nome e titulo
+    Recurso.getAllPublicWithNameAndTipo(req.body[0]['tipo'], req.body[0]['titulo'])
       .then(dados => res.status(200).jsonp(dados))
       .catch(e => res.status(501).jsonp({ error: e }))
   } else
-    if (req.query['titulo'] != undefined) { //com filtro para o titulo
-      console.log("filtro titulo ", req.query['titulo'])
-      Recurso.getAllPublicWithName(req.query['titulo'])
+    if (req.body[0]['titulo'] != undefined) { //com filtro para o titulo
+      console.log("filtro titulo ", req.body[0]['titulo'])
+      Recurso.getAllPublicWithName(req.body[0]['titulo'])
         .then(dados => res.status(200).jsonp(dados))
         .catch(e => res.status(501).jsonp({ error: e }))
     } else
-      if (req.query['tipo'] != undefined) { //com filtro para tipo
+      if (req.body[0]['tipo'] != undefined) { //com filtro para tipo
         console.log("sem filtros")
-        Recurso.getAllPublicWithTipo(req.query['tipo'])
+        Recurso.getAllPublicWithTipo(req.body[0]['tipo'])
           .then(dados => res.status(200).jsonp(dados))
           .catch(e => res.status(501).jsonp({ error: e }))
       } else {
@@ -201,6 +203,23 @@ router.post('/alteraAuthor/:id', function (req, res) {
 });
 
 
+//Obtem a classicação de um recurso VOU TER DE DAR JOIN DISTO
+router.post('/classifica/:id', function (req, res) {
+  console.log(req.params.id)
+  console.log(req.body.author)
+  cl.getRecurso(req.params.id)
+    .then(dados => {
+      if (dados[0].user == req.user._id || req.user.level == 'admin') {
+        Recurso.alterarAuthor(req.params.id, req.body.author)
+          .then(dados => res.status(200).jsonp(dados))
+          .catch(e => res.status(501).jsonp({ error: e }))
+      } else
+        res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
+    })
+    .catch(e => res.status(501).jsonp({ error: e }))
+});
+
+
 //remove um conteudo
 //apenas quem criou ou o admin o pode fazer
 router.get('/remove/:id', function (req, res) {
@@ -245,8 +264,8 @@ router.get('/:id', function (req, res) {
     Recurso.getRecursoAgr(req.params.id)
       .then(dados => res.status(200).jsonp(dados))
       .catch(e => res.status(501).jsonp({ error: e }))
-  }else
-  res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
+  } else
+    res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
 });
 
 
