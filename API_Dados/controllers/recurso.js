@@ -19,16 +19,16 @@ module.exports.getAll = () => {
 }
 
 
-db.recursos.aggregate([
-    {$match : {deleted: { $eq: true }, public : { $eq: true }}},
-    {$lookup: {
-        let: {"userId": {"$toObjectId": "$user"}}, 
-        from : "users", 
-        pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
-        as : "utilizador"
-    }},
-    {$sort : {data : 1}}
-])
+// db.recursos.aggregate([
+//     {$match : {deleted: { $eq: true }, public : { $eq: true }}},
+//     {$lookup: {
+//         let: {"userId": {"$toObjectId": "$user"}}, 
+//         from : "users", 
+//         pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+//         as : "utilizador"
+//     }},
+//     {$sort : {data : 1}}
+// ])
 
 // DONE
 //agregação com os users para aparecer o nome do user e não o id
@@ -91,18 +91,25 @@ module.exports.getRecFromUserPublic = id => {
 }
 
 
-// DONE
+// DONE   LC
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos com estão como publicos
 module.exports.getAllPublic = () => {
     return Recurso
         .aggregate([
-            {$match : {public : { $eq: true }, deleted: { $eq: false }}},
+            {$match : {public : { $eq: true }, deleted: { $eq: false}}},
             {$lookup: {
                 let: {"userId": {"$toObjectId": "$user"}}, 
                 from : "users", 
                 pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
                 as : "utilizador"
+            }},
+            { "$addFields": { "stringId": { "$toString": "$_id" }}},
+            {$lookup: {
+                from : "classifications", 
+                localField: "stringId", 
+                foreignField: "recurso", 
+                as : "classificacao"
             }},
             {$sort : {data : 1}}
         ])
@@ -111,7 +118,7 @@ module.exports.getAllPublic = () => {
 
 
 
-// DONE
+// DONE   LC
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos com estão como publicos e têm tipo
 module.exports.getAllPublicWithTipo = tipo => {
@@ -124,13 +131,20 @@ module.exports.getAllPublicWithTipo = tipo => {
             pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
             as : "utilizador"
         }},
+        { "$addFields": { "stringId": { "$toString": "$_id" }}},
+        {$lookup: {
+            from : "classifications", 
+            localField: "stringId", 
+            foreignField: "recurso", 
+            as : "classificacao"
+        }},
         {$sort : {data : 1}}
     ])
     .exec()
 }
 
 
-// DONE
+// DONE    LC
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos com estão como publicos e e com determinado nome no título
 module.exports.getAllPublicWithName = nome => {
@@ -138,32 +152,50 @@ module.exports.getAllPublicWithName = nome => {
     var reg = new RegExp(nome, 'i')
     return Recurso
         .aggregate([
-            {$match : {public : { $eq: true }, deleted: { $eq: false}, title: reg}},
+        {$match : {public : { $eq: true }, deleted: { $eq: false}, title: reg}},
+        {$lookup: {
+            let: {"userId": {"$toObjectId": "$user"}}, 
+            from : "users", 
+            pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+            as : "utilizador"
+        }},
+        { "$addFields": { "stringId": { "$toString": "$_id" }}},
+        {$lookup: {
+            from : "classifications", 
+            localField: "stringId", 
+            foreignField: "recurso", 
+            as : "classificacao"
+        }},
+        {$sort : {data : 1}}
+        ])
+        .exec()
+}
+
+/// LC
+module.exports.getAllPublicWithNameAndTipo = (tipo, nome) => {
+    return Recurso
+        .aggregate([
+            {$match : {public : { $eq: true }, deleted: { $eq: false}, title: { $regex: nome, $options: i }, tipo: tipo}},
             {$lookup: {
                 let: {"userId": {"$toObjectId": "$user"}}, 
                 from : "users", 
                 pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
                 as : "utilizador"
             }},
+            { "$addFields": { "stringId": { "$toString": "$_id" }}},
+            {$lookup: {
+                from : "classifications", 
+                localField: "stringId", 
+                foreignField: "recurso", 
+                as : "classificacao"
+            }},
             {$sort : {data : 1}}
         ])
         .exec()
 }
 
-module.exports.getAllPublicWithNameAndTipo = (tipo, nome) => {
-    return Recurso
-        .find({
-            public: { $eq: true },
-            deleted: { $eq: false },
-            title: { $regex: nome, $options: i },
-            tipo: tipo
-        })
-        .sort({ data: 1 })
-        .exec()
-}
 
-
-// DONE
+// DONE       LC
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista)
 module.exports.getAllFollow = listaUsers => {
@@ -175,6 +207,13 @@ module.exports.getAllFollow = listaUsers => {
                 from : "users", 
                 pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
                 as : "utilizador"
+            }},
+            { "$addFields": { "stringId": { "$toString": "$_id" }}},
+            {$lookup: {
+                from : "classifications", 
+                localField: "stringId", 
+                foreignField: "recurso", 
+                as : "classificacao"
             }},
             {$sort : {data : 1}}
         ])
