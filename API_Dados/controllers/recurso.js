@@ -1,32 +1,68 @@
 var Recurso = require('../models/recurso')
 var mongoose = require("mongoose");
 
-//OBTER RECURSOS
-
+//DONE
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem todos os recursos
 module.exports.getAll = () => {
     return Recurso
-        .find()
-        .sort({ data: 1 })
+        .aggregate([
+            {$lookup: {
+                let: {"userId": {"$toObjectId": "$user"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+                as : "utilizador"
+            }},
+            {$sort : {data : 1}}
+        ])
         .exec()
 }
 
+
+db.recursos.aggregate([
+    {$match : {deleted: { $eq: true }, public : { $eq: true }}},
+    {$lookup: {
+        let: {"userId": {"$toObjectId": "$user"}}, 
+        from : "users", 
+        pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+        as : "utilizador"
+    }},
+    {$sort : {data : 1}}
+])
+
+// DONE
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem todos os recursos
 module.exports.getAllDeleted = () => {
     return Recurso
-        .find({ deleted: { $eq: true } })
-        .sort({ data: 1 })
+        .aggregate([
+            {$match : {deleted: { $eq: true }}},
+            {$lookup: {
+                let: {"userId": {"$toObjectId": "$user"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+                as : "utilizador"
+            }},
+            {$sort : {data : 1}}
+        ])
         .exec()
 }
 
+// DONE
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem todos os recursos
 module.exports.getAllNoDeleted = () => {
     return Recurso
-    .find({ deleted: { $eq: false } })
-    .sort({ data: 1 })
+    .aggregate([
+        {$match : {deleted: { $eq: false }}},
+        {$lookup: {
+            let: {"userId": {"$toObjectId": "$user"}}, 
+            from : "users", 
+            pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+            as : "utilizador"
+        }},
+        {$sort : {data : 1}}
+    ])
     .exec()
 }
 
@@ -54,37 +90,63 @@ module.exports.getRecFromUserPublic = id => {
         .exec()
 }
 
+
+// DONE
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos com estão como publicos
 module.exports.getAllPublic = () => {
     return Recurso
-        .find({ public: { $eq: true }, deleted: { $eq: false } })
-        .sort({ data: 1 })
+        .aggregate([
+            {$match : {public : { $eq: true }, deleted: { $eq: false }}},
+            {$lookup: {
+                let: {"userId": {"$toObjectId": "$user"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+                as : "utilizador"
+            }},
+            {$sort : {data : 1}}
+        ])
         .exec()
 }
 
 
+
+// DONE
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos com estão como publicos e têm tipo
 module.exports.getAllPublicWithTipo = tipo => {
     return Recurso
-        .find({ public: { $eq: true }, deleted: { $eq: false }, tipo: tipo })
-        .sort({ data: 1 })
-        .exec()
+    .aggregate([
+        {$match : {public : { $eq: true }, deleted: { $eq: false}, tipo: tipo}},
+        {$lookup: {
+            let: {"userId": {"$toObjectId": "$user"}}, 
+            from : "users", 
+            pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+            as : "utilizador"
+        }},
+        {$sort : {data : 1}}
+    ])
+    .exec()
 }
 
+
+// DONE
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos com estão como publicos e e com determinado nome no título
 module.exports.getAllPublicWithName = nome => {
     console.log('entra')
     var reg = new RegExp(nome, 'i')
     return Recurso
-        .find({
-            public: { $eq: true },
-            deleted: { $eq: false },
-            title:reg
-        })
-        .sort({ data: 1 })
+        .aggregate([
+            {$match : {public : { $eq: true }, deleted: { $eq: false}, title: reg}},
+            {$lookup: {
+                let: {"userId": {"$toObjectId": "$user"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+                as : "utilizador"
+            }},
+            {$sort : {data : 1}}
+        ])
         .exec()
 }
 
@@ -100,52 +162,82 @@ module.exports.getAllPublicWithNameAndTipo = (tipo, nome) => {
         .exec()
 }
 
+
+// DONE
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista)
 module.exports.getAllFollow = listaUsers => {
     return Recurso
-        .find({ user: { $in: listaUsers }, deleted: { $eq: false } })
-        .sort({ data: 1 })
+        .aggregate([
+            {$match : {user : { $in: listaUsers }, deleted: { $eq: false}}},
+            {$lookup: {
+                let: {"userId": {"$toObjectId": "$user"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+                as : "utilizador"
+            }},
+            {$sort : {data : 1}}
+        ])
         .exec()
 }
+
+
+// DONE
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista) e com determinado tipo
 module.exports.getAllFollowWithTipo = (listaUsers, tipo) => {
     return Recurso
-        .find({ user: { $in: listaUsers }, deleted: { $eq: false }, tipo: tipo })
-        .sort({ data: 1 })
+        .aggregate([
+            {$match : {user : { $in: listaUsers }, deleted: { $eq: false}, tipo: tipo}},
+            {$lookup: {
+                let: {"userId": {"$toObjectId": "$user"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+                as : "utilizador"
+            }},
+            {$sort : {data : 1}}
+        ])
         .exec()
 }
 
+// DONE
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista) e com determinado nome no título
 module.exports.getAllFollowWithName = (listaUsers, nome) => {
     return Recurso
-        .find({
-            user: { $in: listaUsers },
-            deleted: { $eq: false },
-            title: { $regex: nome, $options: i }
-        })
-        .sort({ data: 1 })
+        .aggregate([
+            {$match : {user : { $in: listaUsers }, deleted: { $eq: false}, title: { $regex: nome, $options: i }}},
+            {$lookup: {
+                let: {"userId": {"$toObjectId": "$user"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+                as : "utilizador"
+            }},
+            {$sort : {data : 1}}
+        ])
         .exec()
 }
 
+// DONE
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista) e com determinado nome no título
 module.exports.getAllFollowWithNameAndTipo = (listaUsers, tipo, nome) => {
     return Recurso
-        .find({
-            user: { $in: listaUsers },
-            deleted: { $eq: false },
-            title: { $regex: nome, $options: i },
-            tipo: tipo
-        })
-        .sort({ data: 1 })
+        .aggregate([
+            {$match : {user : { $in: listaUsers }, deleted: { $eq: false}, title: { $regex: nome, $options: i }, tipo: tipo}},
+            {$lookup: {
+                let: {"userId": {"$toObjectId": "$user"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+                as : "utilizador"
+            }},
+            {$sort : {data : 1}}
+        ])
         .exec()
 }
 
 //recursos pelo seu tipo
-
+// NAO FAZER ESTE AGREGATE (rafa)
 //agregação com os comentários para obter os comentários que por sua vez 
 //tem de ser agregado com os users para obter os nomes dos user
 //OUTRA SOLUÇÃO: fazer um pedido depois deste para obter os comentários, 
