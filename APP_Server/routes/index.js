@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var axios = require('axios')
 
 //get pagina login
 router.get('/', function(req, res) {
@@ -8,16 +9,17 @@ router.get('/', function(req, res) {
 
 //post do login
 router.post('/', function(req, res) {
-  console.log(req.body)
+  //console.log(req.body)
   axios.post('http://localhost:7001/login', req.body)
     .then(dados => {
-      console.log(dados.data)
-      res.cookie('token', dados.data.token, {   //guardar os dados num cookie
+      //console.log(dados.data)
+      res.cookie('token', dados.data, {   //guardar os dados num cookie
         expires: new Date(Date.now() + '60m'),  //validade
         secure: false, // set to true if your using https
         httpOnly: true
       });
-      //res.redirect('/inicio')
+      //console.log(dados.data.userData)
+      res.redirect('/inicio')
     })
     .catch(e => res.render('error', {error: e})) 
 });
@@ -32,7 +34,7 @@ router.post('/registo', function(req, res) {
   axios.post('http://localhost:7001/registo', req.body)
     .then(dados => {
       console.log(dados.data)
-      res.cookie('token', dados.data.token, {   //guardar os dados num cookie
+      res.cookie('token', dados.data, {   //guardar os dados num cookie
         expires: new Date(Date.now() + '60m'),  //validade
         secure: false, // set to true if your using https
         httpOnly: true
@@ -43,12 +45,14 @@ router.post('/registo', function(req, res) {
 });
 
 
-//LIXADA, tem de 
-router.post('/public', function(req, res) {
+//
+router.get('/inicio', function(req, res) {
+  console.log("entra")
   axios.post('http://localhost:7002/public', req.body)
     .then(dados => {
-      req
-      res.render('public', {})
+      console.log(req.cookies.userData)
+      console.log("guarda")
+      res.render('public', {user : req.cookies.userData})
       })
     .catch(e => res.render('error', {error: e})) 
 });

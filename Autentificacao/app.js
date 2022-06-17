@@ -57,11 +57,15 @@ app.post("/registo", function (req, res) {
           return res.status(500).jsonp({error:"Erro no login"})
         }
         // generate a signed son web token with the contents of user object and return it in the response
+        var userTosend = {}
+        userTosend.id = user._id
+        userTosend.level = user.level
+        userTosend.username = user.username
         jwt.sign({ _id:user._id, level: user.level, username: user.username}, 'O Ramalho e fixe',
                 {expiresIn: '60m'}, 
                 function(e, token){
                   if(e) res.status(507).jsonp({error:"Erro na geração de token"})
-                  else res.status(201).jsonp({token:token, id:user._id, level:user.level, username: user.username})
+                  else res.status(201).jsonp({token:token,  userData:userTosend})
         });
       });
     })(req, res);
@@ -82,12 +86,19 @@ app.post("/login", function (req, res) {
       if (err) {
         return res.status(500).jsonp({error:"Erro no login"});
       }
+
+      var userTosend = {}
+      userTosend.id = user._id
+      userTosend.level = user.level
+      userTosend.username = user.username
+      userTosend.image = user.image
+
       // generate a signed son web token with the contents of user object and return it in the response
       jwt.sign({ _id:user._id, level: user.level, username: user.username}, 'O Ramalho e fixe',
                 {expiresIn: '60m'}, 
                 function(e, token){
                   if(e) res.status(507).jsonp({error:"Erro na geração de token"})
-                  else res.status(201).jsonp({token:token,  id:user._id,level:user.level, username: user.username})
+                  else res.status(201).jsonp({token:token, userData:userTosend})
         });
     });
   })(req, res);

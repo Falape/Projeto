@@ -15,8 +15,8 @@ html
     button  
       a(href='/recurso') Criar Recurso
   
-    img.UserNavBar(src = user.path onclick="window.location.href = 'http://localhost:7002/users/"+ user._id +"'")
-      h2 user.username 
-      h3 user.level
+    img.UserNavBar(src = user.image onclick="window.location.href = 'http://localhost:7002/users/"+ user.id +"'")
+    h2= user.username 
+    h3= user.level
   body
     block content
