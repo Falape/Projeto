@@ -108,6 +108,7 @@ module.exports.getAllFollow = listaUsers => {
         .sort({ data: 1 })
         .exec()
 }
+
 //agregação com os users para aparecer o nome do user e não o id
 //Obtem recursos apenas dos Users que segue(tenho de lhe dar a lista) e com determinado tipo
 module.exports.getAllFollowWithTipo = (listaUsers, tipo) => {
@@ -184,12 +185,10 @@ module.exports.alterarAuthor = (id, author) => {
 
 //ADICIONAR RECURSOS
 module.exports.inserir = recurso => {
-    console.log("aqui")
     var data = new Date()
     recurso.data = data.toISOString().substring(0, 16)
     recurso.deleted=false
     var newRecurso = new Recurso(recurso)
-    console.log(newRecurso)
 
     return newRecurso.save()
 }
