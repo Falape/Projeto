@@ -1,0 +1,18 @@
+doctype html
+html
+    head
+    title Repositório de Recursos Didáticos
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    block content
+        h1 Registo
+        form(action='/registar', method='POST')
+            p
+                | Username: 
+                input(type='text', name='username', value='')
+                | Email: 
+                input(type='email', name='password', value='')
+                | Password: 
+                input(type='password', name='password', value='')
+            button(type='primary', value='Submit') Submeter
+        adress 
+            a(href="/") voltar para página de login

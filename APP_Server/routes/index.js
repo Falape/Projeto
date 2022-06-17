@@ -25,12 +25,12 @@ router.post('/', function(req, res) {
 });
 
 //get página registo
-router.get('/registo', function(req, res) {
+router.get('/registar', function(req, res) {
   res.render('registo');
 });
 
 //post do registo
-router.post('/registo', function(req, res) {
+router.post('/registar', function(req, res) {
   axios.post('http://localhost:7001/registo', req.body)
     .then(dados => {
       console.log(dados.data)
