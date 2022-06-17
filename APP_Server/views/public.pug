@@ -1,3 +1,34 @@
 extends layout
 
 block content
+   div.container
+      div.row 
+        h1 Feed Noticias
+        form(action='/', method='POST')
+         span.label  Titulo: 
+           input(type='text', name='titulo', value='')
+         span.label tipo: 
+           input(type='text', name='tipo', value='')
+         input(class="button tertiary" type="submit" value="search")
+ 
+   table 
+      tr 
+        th Título
+        th User
+        th Classificação
+      each a in recursos
+        tr(href="http://localhost:7002/recurso/"+ a._id)
+          td
+            b 
+             a(href="/recurso/"+ a._id)= a.title
+            p Data #{a.data}
+          td
+            a(href='/user/'+a.utilizador[0]._id)
+               div.row
+                  input(type="image" src=a.utilizador[0].path  width="30" height="30" )
+                  p= a.utilizador[0].username
+          td 
+            if a.classificacao.length == 0
+               p Classificação: 0
+            else
+               p Classificação: #{a.classificacao.classificacao}

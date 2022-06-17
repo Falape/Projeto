@@ -9,7 +9,7 @@ router.get('/', function(req, res) {
 
 //post do login
 router.post('/', function(req, res) {
-  //console.log(req.body)
+  console.log(req.body)
   axios.post('http://localhost:7001/login', req.body)
     .then(dados => {
       //console.log(dados.data)
@@ -53,7 +53,8 @@ router.get('/inicio', function(req, res) {
   axios.post('http://localhost:7002/recursos/public?token=' + req.cookies.data.token)
     .then(dados => {
       console.log("guarda")
-      res.render('public', {user : req.cookies.data.userData})
+      console.log(req.cookies.data.userData)//dados.data)
+      res.render('public', {navbar : req.cookies.data.userData, recursos : dados.data})
       })
     .catch(e => res.render('error', {error: e})) 
 });

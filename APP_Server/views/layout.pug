@@ -5,8 +5,9 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
   nav
     h1 RRD - Repositório de Recursos Didáticos
-  
+    
     div.row
+      
       button  
         a(href='/inicio') Inicio
       button  
@@ -15,11 +16,17 @@ html
         a(href='/users') Utilizadores
       button  
         a(href='/recurso') Criar Recurso
-
-      div.UserNavBar
-        img(src = user.image onclick="window.location.href = 'http://localhost:7002/users/"+ user.id +"'")
-        div.col
-          h3= user.username 
-          h4= user.level
+      
+      div.col
+          a(href='/user/'+navbar.id)
+            div.row
+              if navbar.image = '/path'
+                input(type="image" src="/images/penguim2.png"  width="80" height="80" )
+              else 
+                input(type="image" src=navbar.image  width="80" height="80" )
+              div.col-sm-1
+                  h4= navbar.username 
+                  p= navbar.level
+    
   body
     block content
