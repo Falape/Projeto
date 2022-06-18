@@ -1,5 +1,6 @@
 var Recurso = require('../models/recurso')
 var mongoose = require("mongoose");
+ObjectId = require('mongodb').ObjectId;
 
 //DONE
 //agregação com os users para aparecer o nome do user e não o id
@@ -29,6 +30,7 @@ module.exports.getAll = () => {
 //     }},
 //     {$sort : {data : 1}}
 // ])
+
 
 // DONE
 //agregação com os users para aparecer o nome do user e não o id
@@ -75,12 +77,42 @@ module.exports.getMyRec = id => {
         .exec()
 }
 
+
+// db.recursos.aggregate([
+//     {$match : {user:id, deleted: { $eq: false }}},
+//     { "$addFields": { "stringId": { "$toString": "$_id" }}},
+//     {$lookup: {
+//         from : "classifications", 
+//         localField: "stringId", 
+//         foreignField: "recurso", 
+//         as : "classificacao"
+//     }},
+//     {$sort : {data : 1}}
+// ])
+
+
 module.exports.getRecFromUser = id => {
     return Recurso
-        .find({user:id, deleted: { $eq: false }})
-        .sort({ data: 1 })
+        .aggregate([
+            {$match : {user:id, deleted: { $eq: false }}},
+            { "$addFields": { "stringId": { "$toString": "$_id" }}},
+            {$lookup: {
+                from : "classifications", 
+                localField: "stringId", 
+                foreignField: "recurso", 
+                as : "classificacao"
+            }},
+            {$sort : {data : 1}}
+        ])
         .exec()
 }
+
+// module.exports.getRecFromUser = id => {
+//     return Recurso
+//         .find({user:id, deleted: { $eq: false }})
+//         .sort({ data: 1 })
+//         .exec()
+// }
 
 //obtem todos os recursos publicos que um user publicou 
 module.exports.getRecFromUserPublic = id => {
@@ -276,6 +308,7 @@ module.exports.getAllFollowWithNameAndTipo = (listaUsers, tipo, nome) => {
         .exec()
 }
 
+
 //recursos pelo seu tipo
 // NAO FAZER ESTE AGREGATE (rafa)
 //agregação com os comentários para obter os comentários que por sua vez 
@@ -284,9 +317,8 @@ module.exports.getAllFollowWithNameAndTipo = (listaUsers, tipo, nome) => {
 //na mesma é preciso fazer agregação com os users para obter o nome do user 
 //que adicionou
 module.exports.getRecursoAgr = id => {
-    console.log("entra no Controller")
-    id = mongoose.Types.ObjectId(id);
-    console.log(id)
+    id = ObjectId(id);
+
     return Recurso
         .aggregate([
             {$match : { _id: id }},
@@ -296,6 +328,7 @@ module.exports.getRecursoAgr = id => {
                 pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
                 as : "utilizador"
             }}
+
         ])
         .exec()
 }

@@ -68,16 +68,20 @@ router.get('/getMyRec', function (req, res) {
 // ver os recursos de um user dado o seu id, se o estiver seguir pode ver publicas
 // e privadas, se não estiver a seguir apenas vê as publicas
 router.get('/userRecurso/:id', function (req, res) {
+  console.log("ENTREI111")
   User.getUser(req.user._id)
     .then(dados => {
-      if (dados.followers.contains(req.params.id) || req.user.level == 'admin') {
-        Recurso.getRecFromUser(req.user._id)
-          .then(dados => res.status(200).jsonp(dados))
-          .catch(e => res.status(501).jsonp({ error: e }))
+      if (dados.followers.includes(req.params.id) || req.user.level == 'admin') {
+        Recurso.getRecFromUser(req.params.id)
+          .then(dados => { 
+            console.log(dados)
+            res.status(200).jsonp(dados)
+          })
+          .catch(e => res.status(502).jsonp({ error: e }))
       } else {
-        Recurso.getRecFromUserPublic(req.user._id)
+        Recurso.getRecFromUserPublic(req.params.id)
           .then(dados => res.status(200).jsonp(dados))
-          .catch(e => res.status(501).jsonp({ error: e }))
+          .catch(e => res.status(503).jsonp({ error: e }))
       }
 
     })

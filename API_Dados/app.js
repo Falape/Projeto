@@ -7,7 +7,7 @@ var logger = require('morgan');
 var mongoose = require("mongoose");
 var bodyParser = require("body-parser");
 
-var recursoRouter = require('./routes/recursos');
+var recursosRouter = require('./routes/recursos');
 var usersRouter = require('./routes/users');
 var commentsRouter = require('./routes/comments');
 
@@ -46,7 +46,7 @@ app.use(function(req, res, next){
 
 
 console.log("chega aqui")
-app.use('/recursos', recursoRouter);
+app.use('/recursos', recursosRouter);
 app.use('/users', usersRouter);
 app.use('/comments', commentsRouter)
 
