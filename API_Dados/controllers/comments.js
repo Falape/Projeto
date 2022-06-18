@@ -21,9 +21,6 @@ module.exports.GetComment = id => {
         .exec()
 }
 
-
-
-
 //fazer agregação com os users para obter o nome 
 //do user e manter o seu id
 module.exports.GetCommentsRecurso = id => {
@@ -33,7 +30,8 @@ module.exports.GetCommentsRecurso = id => {
         .exec()
 }
 
-
+//fazer agregação com os users para obter o nome 
+//do user e manter o seu id
 module.exports.GetCommentsRecursoAdmin = id => {
     return Comments
         .find({recurso:id})
@@ -64,6 +62,7 @@ module.exports.GetCommentsRecurso = id => {
 //que seja ordenado pelo titulo do recurso e não 
 //pela data e para não aparecer o id do recurso 
 //mas sim o seu nome
+//NÃO FAZER
 module.exports.GetCommentsUser = id => {
     return Comments
         .find({user:id},{recurso:1, comentario:1})

@@ -34,7 +34,7 @@ block content
     div.container
         h3 Comentários 
 
-        form(action='/comentario/'+recurso._id, method='POST')
+        form(action='/comentarios/'+recurso._id, method='POST')
          span.label  Comentário: 
            input(type='text', name='comentario', value='')
          input(class="button tertiary" type="submit" value="send")
