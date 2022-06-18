@@ -86,7 +86,7 @@ router.get('/userRecurso/:id', function (req, res) {
 
 //recursos públicos
 router.post('/public', function (req, res) {
-  
+
 
   if (Object.keys(req.body).length != 0) {
     console.log("entra Public")
@@ -263,14 +263,35 @@ router.get('/recupera/:id', function (req, res) {
 });
 
 //ADMIN pode ver um recurso pelo seu id(pode não vir a ter utilidade)
-// router.get('/:id', function (req, res) {
-//   if (req.user.level == 'admin') {
-//     Recurso.getRecursoAgr(req.params.id)
-//       .then(dados => res.status(200).jsonp(dados))
-//       .catch(e => res.status(501).jsonp({ error: e }))
-//   } else
-//     res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
-// });
+router.get('/:id', function (req, res) {
+  if (dados[0].user == req.user._id || req.user.level == 'admin') {
+    Recurso.getRecursoAgr(req.params.id)
+      .then(dados => {
+        if (dados[0].user == req.user._id || req.user.level == 'admin') {
+          res.status(200).jsonp(dados)
+        } else
+          if (dados.public == true && deleted == false) {
+            res.status(200).jsonp(dados)
+          } else
+            if (dados.public == false) {
+              User.getFollwers(req.user._id)
+                .then(dadosRec => {
+                  console.log(dadosRec)
+                  if(dadosRec.contains(dados[0].user)){
+                    res.status(200).jsonp(dadosRec)
+                  }else
+                  res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
+                })
+                .catch(e => res.status(501).jsonp({ error: e }))
+
+              res.status(200).jsonp(dados)
+            }
+
+      })
+      .catch(e => res.status(501).jsonp({ error: e }))
+  } else
+    res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
+});
 
 
 module.exports = router;

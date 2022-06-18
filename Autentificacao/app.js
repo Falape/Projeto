@@ -39,7 +39,7 @@ app.use(logger('dev'));
 app.post("/registo", function (req, res) {
   console.log(req.body);
   //console.log(req.body.password);
-  User.register(new User({ username: req.body.username, email: req.body.email, level: 'consumer'}), req.body.password, function (err, user) {
+  User.register(new User({ username: req.body.username, email: req.body.email, level: 'consumer', path:"/images/penguim2.png"}), req.body.password, function (err, user) {
     if (err) {
       console.log(err);
       return res.status(400).jsonp({
