@@ -4,7 +4,11 @@ var axios = require('axios');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+  axios.get('http://localhost:7002/users/?token='+ req.cookies.data.token)
+          .then(users =>{
+            res.render('users', {navbar : req.cookies.data.userData, users : users.data})
+          })
+          .catch(e => res.render('error', {error: e})) 
 });
 
 
