@@ -43,11 +43,20 @@ module.exports.getFollowing = id => {
         .exec()
 }
 
-//query dificil mas valorizada
+// Devolve uma lista "myFollowers" com os id dos users que "me" seguem
+// db.users.aggregate([
+//     {$match : {followers: "62ab68fea4bbfa4215977f20"}},
+//     {$group: {_id : null, myFollowers: {$addToSet: "$_id"}}},
+//     {$project: {_id:0, myFollowers: 1}}
+// ])
+
+// db.users.find({followers: "62ab68fea4bbfa4215977f20"}, {_id:1, username:1, level: 1})
+
+//DONE
 //preciso ir a todos os users ver se estão a dar follow no id dado
-module.exports.getFollwers = id => {
+module.exports.getFollowers = id => {
     return User
-        .findOne({_id: id})
+        .find({followers: id}, {_id:1, username:1, level: 1})
         .exec()
 }
 

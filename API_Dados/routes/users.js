@@ -89,8 +89,11 @@ router.get('/addFollower/:id', function (req, res) {
 //Obtem followers de um User
 router.get('/getFollowers/:id', function (req, res) {
     console.log(req.params.id)
-    User.getFollowing(req.user._id)
-        .then(dados => res.status(200).jsonp(dados))
+    User.getFollowers(req.user._id)
+        .then(dados => {
+            console.log(dados)
+            res.status(200).jsonp(dados)
+        })
         .catch(e => res.status(501).jsonp({ error: e }))
 });
 

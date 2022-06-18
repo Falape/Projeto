@@ -8,13 +8,27 @@ block content
     p Descrição: 
         span=user.descricao 
     p Following: 
-        span=user.username
-    p Followers: 
-        span=user.username
+        span=user.followers.length
+   
+    if myfollowers.length == 0
+        p Followers: 0
+    else
+        p Followers: #{myfollowers.length}
     h2 Os meus recursos: 
     table 
-      tr 
-        th Título
-        th User
-        th Classificação
-      
+        tr 
+            th Título
+            th User
+            th Classificação
+            th Data
+        each r in recursos
+            tr 
+                td
+                    a(href="/recursos/"+r._id)= r.title
+                td= user.username
+                //if r.classificacao.length == 0
+                    td 0/5
+                //else
+                    td=r.classificacao[0].classificacao /5
+                td= r.data
+            tr
