@@ -1,6 +1,7 @@
 extends layout
 
 block content
+
     div.container
         a(href='/users/'+userData._id)
             div.row
@@ -12,29 +13,72 @@ block content
             h2= recurso.title
             p Classificação: FALTA, fazer join na querie
             if flagLevel == 'admin' || flagLevel == 'dono'
-                button(class = 'secondary' onclick="window.location.href = '/deleteRecurso/"+ recurso._id +"'") Delete
+                button(class = 'secondary' onclick="window.location.href = '/deleteRecurso/"+ recurso._id +"?user=" + userData._id +"'") Delete
 
 
     div.container
-        p
-            b Author: 
-            | #{recurso.author}
-        p
-            b Descrição: 
-            | #{recurso.descricao}
+        div.row
+            p
+                b Author: 
+                | #{recurso.author}
+                if flagLevel == 'admin' || flagLevel == 'dono'
+                    button(class = 'tertiary' onclick="window.location.href = '/editAuthor/"+ recurso._id +"'") Editar
+        div.row
+            p
+                if recurso.public==false 
+                    b Estado:
+                    | publico
+                else
+                    b Estado:
+                    | privado
+                if flagLevel == 'admin' || flagLevel == 'dono'
+                    button(class = 'tertiary' onclick="window.location.href = '/editEstado/"+ recurso._id +"'") Editar
 
     div.container
         h3 Conteudos 
         p Tabela ou algo do género
     
-    if flagLevel != 'admin' || flagLevel != 'dono'
+    if flagLevel != 'admin' && flagLevel != 'dono'
         div.container
             h3 Classificar
     
     div.container
-        h3 Comentários 
+       h3 Comentários
+       table
+           tr 
+           each come in comentarios
+               if come.deleted == true && flagLevel == 'admin'
+                   table 
+                    tr
+                        th.deleted
+                            div.row
+                                input(type="image" src=come.utilizador[0].path  width="30" height="30" )
+                                p= come.utilizador[0].username       
+                    tr
+                        td.deleted  
+                           div
+                               p= come.comentario
+                        td.deleted  
+                           div
+                               p Pagado por : fazer join do deleted 
+                               p A #{come.deleteDate}
+               else
+                table 
+                    tr
+                        th
+                            div.row
+                                input(type="image" src=come.utilizador[0].path  width="30" height="30" )
+                                p= come.utilizador[0].username       
+                    tr
+                        td   
+                            div
+                                p= come.comentario
+                        td
+                            div
+                                if flagLevel == 'admin' || come.user == navbar.id
+                                   button(class = 'secondary' onclick="window.location.href = '/comentarios/deleteComentario/"+ come._id +"?recurso=" + recurso._id + "'") Delete
 
-        form(action='/comentarios/'+recurso._id, method='POST')
-         span.label  Comentário: 
-           input(type='text', name='comentario', value='')
-         input(class="button tertiary" type="submit" value="send")
+    form(action='/comentarios/'+recurso._id, method='POST')
+        span.label  Comentário: 
+        input(type='text', name='comentario', value='')
+        input(class="button tertiary" type="submit" value="send")

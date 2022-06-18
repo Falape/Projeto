@@ -91,7 +91,7 @@ router.get('/userRecurso/:id', function (req, res) {
 //recursos públicos
 router.post('/public', function (req, res) {
 
-
+  console.log("entra")
   if (Object.keys(req.body).length != 0) {
     console.log("entra Public")
     if (req.body[0]['titulo'] != undefined && req.body[0]['tipo'] != undefined) { //com filtro para o nome e titulo
@@ -266,7 +266,7 @@ router.get('/recupera/:id', function (req, res) {
     .catch(e => res.status(501).jsonp({ error: e }))
 });
 
-//ADMIN pode ver um recurso pelo seu id(pode não vir a ter utilidade)
+
 router.get('/:id', function (req, res) {
   console.log("entra")
   console.log(req.params.id)

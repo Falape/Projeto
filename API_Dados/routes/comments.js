@@ -15,8 +15,8 @@ router.post('/:id', function (req, res) {
     console.log(req.body)
     Comments.inserir(req.body)
         .then(dados => {
+            console.log(dados)//req.body)
             res.status(201).jsonp(dados);
-            console.log("saiu")//req.body)
         })
         .catch(e => {
             res.status(501).jsonp({ erro: e })
@@ -26,6 +26,7 @@ router.post('/:id', function (req, res) {
 
 //obtem comentários de um recurso
 router.get('/recurso/:id', function (req, res) {
+    console.log("entra no comments par o id:")
     console.log(req.params.id)
     if (req.user.level == 'admin') {
         Comments.GetCommentsRecursoAdmin(req.params.id)
@@ -34,7 +35,10 @@ router.get('/recurso/:id', function (req, res) {
 
     } else {
         Comments.GetCommentsRecurso(req.params.id)
-            .then(dados => res.status(200).jsonp(dados))
+            .then(dados => {
+                console.log(dados)
+                res.status(200).jsonp(dados)
+            })
             .catch(e => res.status(501).jsonp({ error: e }))
     }
 });
@@ -42,12 +46,17 @@ router.get('/recurso/:id', function (req, res) {
 
 //remove um comentário
 router.get('/remove/:id', function (req, res) {
+    console.log("chega a route remove commente")
     console.log(req.params.id)
     Comments.GetComment(req.params.id)
         .then(dados => {
+            console.log(dados)
             if (dados[0].user == req.user._id | req.user.level == 'admin') {
-                Comments.removeComment(req.body._id, req.params.id)
-                    .then(dadosR => res.status(200).jsonp(dadosR))
+                console.log('entrada2')
+                Comments.removeComment(req.params.id, req.user._id)
+                    .then(dadosR => {
+                        console.log("dadosR")
+                        res.status(200).jsonp(dadosR)})
                     .catch(e => res.status(501).jsonp({ error: e }))
             }else
             res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })

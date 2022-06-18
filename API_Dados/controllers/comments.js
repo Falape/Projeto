@@ -1,12 +1,14 @@
 var Comments = require('../models/comments')
 var mongoose = require("mongoose");
-
+ObjectId = require('mongodb').ObjectId;
 
 module.exports.inserir = comment => {
     console.log("aqui")
     var data = new Date()
     comment.data = data.toISOString().substring(0, 16)
     comment.deleted=false
+    comment.deleteDate = ''
+    comment.deleteUser = ''
     var newComment = new Comments(comment)
     console.log(newComment)
     return newComment.save()
@@ -16,6 +18,9 @@ module.exports.inserir = comment => {
 //fazer agregação com os users para obter o nome 
 //do user e manter o seu id
 module.exports.GetComment = id => {
+    id = ObjectId(id)
+    console.log("controller GetComment")
+    console.log(id)
     return Comments
         .aggregate([
             {$match : {_id:id}},
@@ -112,6 +117,7 @@ module.exports.GetCommentsUser = id => {
 //não se apagam dados :) apenas não os mostramos ;)
 module.exports.removeComment = (id, user) =>{
     console.log("string")
+    id = ObjectId(id)
     var data = new Date()
     return Comments
         .updateOne({ _id:  id},{deleted:true, deleteDate:data.toISOString().substring(0,16), deleteUser:user}); 
@@ -119,6 +125,7 @@ module.exports.removeComment = (id, user) =>{
 
 module.exports.recuperaComment = id =>{
     console.log("string")
+    id = ObjectId(id)
     return Comments
         .updateOne({ _id:  id},{deleted:false, deleteDate:'', deleteUser:''}); 
 }

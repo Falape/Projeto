@@ -1574,6 +1574,30 @@ table.horizontal thead tr:first-child th:last-child {
   }
 }
 
+
+table th.deleted {
+  text-align: left;
+  background: var(--table-body-alt-back-color);
+  color: var(--table-head-fore-color);
+}
+
+table td.deleted {
+  background: var(--table-border-separator-color);
+  color: var(--table-body-fore-color);
+  border-top: 0.0625rem solid var(--table-border-color);
+}
+
+table td.deletedUser {
+  background: var(--table-border-separator-color);
+  float: left;
+  width: 10%;
+  color: var(--table-body-fore-color);
+  border-top: 0.0625rem solid var(--table-border-color);
+}
+
+
+
+
 :root {
   --table-body-alt-back-color: #444;
 }
