@@ -2,6 +2,39 @@ var express = require('express');
 var router = express.Router();
 var axios = require('axios')
 
+router.get('/new', function (req, res) {
+    console.log("ENTREI NO NOVO RECURSO1")
+    console.log(req.cookies.data.userData.id)
+    res.render('novo_recurso', { navbar: req.cookies.data.userData, userId: req.cookies.data.userData.id})
+})
+
+router.post('/new', function (req, res) {
+    console.log("ENTREI NO NOVO RECURSO2")
+    console.log(req.body)
+    console.log(req.body.public)
+    req.body.public = Boolean(req.body.public)
+    console.log(req.body)
+    axios.post('http://localhost:7002/recursos?token=' + req.cookies.data.token, req.body)
+    .then(dados => {
+        console.log(dados.data)
+        res.redirect('/inicio')
+    })
+    .catch(e => res.render('error', { error: e }))
+})
+
+
+
+router.get('/deleteRecurso/:id', function (req, res) {
+
+    console.log(req.body)
+    axios.get('http://localhost:7002/recursos/remove/' + req.params.id + '?token=' + req.cookies.data.token, req.body)
+    .then(dados => {
+        console.log(dados.data)
+        res.redirect('/users/' + req.query.recurso)
+    })
+    .catch(e => res.render('error', { error: e }))
+})
+
 
 router.get('/:id', function (req, res) {
     console.log("entra")
@@ -31,18 +64,6 @@ router.get('/:id', function (req, res) {
         })
         .catch(e => res.render('error', { error: e }))
 });
-   
-
-router.get('/deleteRecurso/:id', function (req, res) {
-
-    console.log(req.body)
-    axios.get('http://localhost:7002/recursos/remove/' + req.params.id + '?token=' + req.cookies.data.token, req.body)
-        .then(dados => {
-            console.log(dados.data)
-            res.redirect('/users/' + req.query.recurso)
-        })
-        .catch(e => res.render('error', { error: e }))
-})
 
 module.exports = router;
     
