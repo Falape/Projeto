@@ -284,8 +284,19 @@ module.exports.getAllFollowWithNameAndTipo = (listaUsers, tipo, nome) => {
 //na mesma é preciso fazer agregação com os users para obter o nome do user 
 //que adicionou
 module.exports.getRecursoAgr = id => {
+    console.log("entra no Controller")
+    id = mongoose.Types.ObjectId(id);
+    console.log(id)
     return Recurso
-        .find({ _id: id })
+        .aggregate([
+            {$match : { _id: id }},
+            {$lookup: {
+                let: {"userId": {"$toObjectId": "$user"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+                as : "utilizador"
+            }}
+        ])
         .exec()
 }
 
