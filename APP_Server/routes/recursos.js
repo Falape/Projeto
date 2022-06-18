@@ -11,7 +11,7 @@ router.get('/:id', function (req, res) {
         .then(dados => {
             console.log("guarda")
             console.log(dados)//dados.data)
-            res.render('public', { navbar: req.cookies.data.userData, recursos: dados.data })
+            res.render('recurso', { navbar: req.cookies.data.userData, recursos: dados.data })
         })
         .catch(e => res.render('error', { error: e }))
 });

@@ -264,33 +264,36 @@ router.get('/recupera/:id', function (req, res) {
 
 //ADMIN pode ver um recurso pelo seu id(pode não vir a ter utilidade)
 router.get('/:id', function (req, res) {
-  if (dados[0].user == req.user._id || req.user.level == 'admin') {
-    Recurso.getRecursoAgr(req.params.id)
-      .then(dados => {
-        if (dados[0].user == req.user._id || req.user.level == 'admin') {
+  console.log("print")
+  Recurso.getRecursoAgr(req.params.id)
+    .then(dados => {
+      console.log(dados)
+      if (dados[0].user == req.user._id || req.user.level == 'admin') {
+        console.log("é o dono")
+        res.status(200).jsonp(dados)
+      } else
+        if (dados[0].public == true && dados[0].deleted == false) {
+          console.log("é public")
           res.status(200).jsonp(dados)
         } else
-          if (dados.public == true && deleted == false) {
+          if (dados[0].public == false) {
+            console.log("é o privado")
+            User.getFollwers(req.user._id)
+              .then(dadosRec => {
+                console.log("aqui é os followers")
+                console.log(dadosRec)
+                if(dadosRec[0].contains(dados[0].user)){
+                  res.status(200).jsonp(dados)
+                }else
+                res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
+              })
+              .catch(e => res.status(501).jsonp({ error: e }))
+
             res.status(200).jsonp(dados)
-          } else
-            if (dados.public == false) {
-              User.getFollwers(req.user._id)
-                .then(dadosRec => {
-                  console.log(dadosRec)
-                  if(dadosRec.contains(dados[0].user)){
-                    res.status(200).jsonp(dadosRec)
-                  }else
-                  res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
-                })
-                .catch(e => res.status(501).jsonp({ error: e }))
+          }
+    })
+    .catch(e => res.status(501).jsonp({ error: e }))
 
-              res.status(200).jsonp(dados)
-            }
-
-      })
-      .catch(e => res.status(501).jsonp({ error: e }))
-  } else
-    res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
 });
 
 

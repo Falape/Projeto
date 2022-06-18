@@ -46,7 +46,7 @@ router.post('/registar', function(req, res) {
 
 
 //
-router.get('/:id', function(req, res) {
+router.get('/inicio', function(req, res) {
   console.log("entra")
   console.log(req.cookies.data.token)
   //axios.post('http://localhost:7002/recursos?token='+ req.cookies.data.token)
@@ -54,9 +54,23 @@ router.get('/:id', function(req, res) {
     .then(dados => {
       console.log("guarda")
       console.log(req.cookies.data.userData)//dados.data)
-      //res.render('public', {navbar : req.cookies.data.userData, recursos : dados.data})
+      res.render('public', {navbar : req.cookies.data.userData, recursos : dados.data})
       })
     .catch(e => res.render('error', {error: e})) 
+});
+
+
+router.get('/recursos/:id', function (req, res) {
+  console.log("entra")
+  console.log(req.cookies.data.token)
+  //axios.post('http://localhost:7002/recursos?token='+ req.cookies.data.token)
+  axios.get('http://localhost:7002/recursos/' + req.params.id + '?token=' + req.cookies.data.token)
+      .then(dados => {
+          console.log("guarda")
+          console.log(dados.data)//dados.data)
+          res.render('recurso', { navbar: req.cookies.data.userData, recursos: dados.data[0] })
+      })
+      .catch(e => res.render('error', { error: e }))
 });
 
 module.exports = router;
