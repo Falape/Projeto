@@ -12,30 +12,59 @@ module.exports.inserir = comment => {
     return newComment.save()
 }
 
+//DONE
 //fazer agregação com os users para obter o nome 
 //do user e manter o seu id
 module.exports.GetComment = id => {
     return Comments
-        .find({_id:id})
-        .sort({data:1})
+        .aggregate([
+            {$match : {_id:id}},
+            {$lookup: {
+                let: {"userId": {"$toObjectId": "$user"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+                as : "utilizador"
+            }},
+            {$sort : {data : 1}}
+        ])
         .exec()
 }
 
+
+//DONE
 //fazer agregação com os users para obter o nome 
 //do user e manter o seu id
 module.exports.GetCommentsRecurso = id => {
     return Comments
-        .find({recurso:id, deleted: { $eq: false } })
-        .sort({data:1})
+        .aggregate([
+            {$match : {recurso:id, deleted: { $eq: false } }},
+            {$lookup: {
+                let: {"userId": {"$toObjectId": "$user"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+                as : "utilizador"
+            }},
+            {$sort : {data : 1}}
+        ])
         .exec()
 }
 
+
+//DONE
 //fazer agregação com os users para obter o nome 
 //do user e manter o seu id
 module.exports.GetCommentsRecursoAdmin = id => {
     return Comments
-        .find({recurso:id})
-        .sort({data:1})
+        .aggregate([
+            {$match : {recurso:id}},
+            {$lookup: {
+                let: {"userId": {"$toObjectId": "$user"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+                as : "utilizador"
+            }},
+            {$sort : {data : 1}}
+        ])
         .exec()
 }
 
@@ -47,13 +76,21 @@ module.exports.GetNumberOfcommentsRecurso = id => {
 }
 
 
-
+//DONE
 //fazer agregação com os users para obter o nome 
 //do user e manter o seu id
 module.exports.GetCommentsRecurso = id => {
     return Comments
-        .find({recurso:id, deleted: { $eq: false }})
-        .sort({data:1})
+        .aggregate([
+            {$match : {recurso:id, deleted: { $eq: false }}},
+            {$lookup: {
+                let: {"userId": {"$toObjectId": "$user"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
+                as : "utilizador"
+            }},
+            {$sort : {data : 1}}
+        ])
         .exec()
 }
 
