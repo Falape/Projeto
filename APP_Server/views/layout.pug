@@ -3,7 +3,7 @@ html
   head
     title Repositório de Recursos Didáticos
     link(rel='stylesheet', href='/stylesheets/style.css')
-  nav
+  nav 
     h1 RRD - Repositório de Recursos Didáticos
     
     div.row
@@ -18,15 +18,15 @@ html
         a(href='/recursos/new') Criar Recurso
       
       div.col
-        a(href='/users/'+navbar.id)
-          div.row
-            if navbar.image = '/path'
-              input(type="image" src="/images/penguim2.png"  width="80" height="80" )
-            else 
-              input(type="image" src=navbar.image  width="80" height="80" )
-            div.col-sm-1
-              h4= navbar.username 
-              p= navbar.level
+          a(href='/user/'+navbar.id)
+            div.row
+              if navbar.image = '/path'
+                input(type="image" src="/images/penguim2.png"  width="80" height="80" )
+              else 
+                input(type="image" src=navbar.image  width="80" height="80" )
+              div.col-sm-1
+                  h4= navbar.username 
+                  p= navbar.level
     
   body
     block content

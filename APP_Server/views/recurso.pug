@@ -1,4 +1,40 @@
 extends layout
 
 block content
+    div.container
+        a(href='/users/'+userData._id)
+            div.row
+                input(type="image" src=userData.path  width="30" height="30" )
+                p= userData.username
+                
+    div.container
+        div.row
+            h2= recurso.title
+            p Classificação: FALTA, fazer join na querie
+            if flagLevel == 'admin' || flagLevel == 'dono'
+                button(class = 'secondary' onclick="window.location.href = '/deleteRecurso/"+ recurso._id +"'") Delete
 
+
+    div.container
+        p
+            b Author: 
+            | #{recurso.author}
+        p
+            b Descrição: 
+            | #{recurso.descricao}
+
+    div.container
+        h3 Conteudos 
+        p Tabela ou algo do género
+    
+    if flagLevel != 'admin' || flagLevel != 'dono'
+        div.container
+            h3 Classificar
+    
+    div.container
+        h3 Comentários 
+
+        form(action='/comentario/'+recurso._id, method='POST')
+         span.label  Comentário: 
+           input(type='text', name='comentario', value='')
+         input(class="button tertiary" type="submit" value="send")

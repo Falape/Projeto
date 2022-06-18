@@ -318,6 +318,7 @@ module.exports.getAllFollowWithNameAndTipo = (listaUsers, tipo, nome) => {
 //que adicionou
 module.exports.getRecursoAgr = id => {
     id = ObjectId(id);
+
     return Recurso
         .aggregate([
             {$match : { _id: id }},
@@ -326,8 +327,8 @@ module.exports.getRecursoAgr = id => {
                 from : "users", 
                 pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
                 as : "utilizador"
-            }},
-            {$sort : {data : 1}}
+            }}
+
         ])
         .exec()
 }

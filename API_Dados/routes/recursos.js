@@ -268,9 +268,11 @@ router.get('/recupera/:id', function (req, res) {
 
 //ADMIN pode ver um recurso pelo seu id(pode não vir a ter utilidade)
 router.get('/:id', function (req, res) {
-  console.log("print")
+  console.log("entra")
+  console.log(req.params.id)
   Recurso.getRecursoAgr(req.params.id)
     .then(dados => {
+      console.log("print")
       console.log(dados)
       if (dados[0].user == req.user._id || req.user.level == 'admin') {
         console.log("é o dono")
