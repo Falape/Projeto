@@ -68,6 +68,12 @@ module.exports.GetCommentsRecursoAdmin = id => {
                 pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
                 as : "utilizador"
             }},
+            {$lookup: {
+                let: {"deleteUserId": {"$toObjectId": "$deleteUser"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$deleteUserId"]}}}], 
+                as : "deleteUser"
+            }},
             {$sort : {data : 1}}
         ])
         .exec()

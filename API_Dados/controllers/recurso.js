@@ -327,8 +327,14 @@ module.exports.getRecursoAgr = id => {
                 from : "users", 
                 pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
                 as : "utilizador"
-            }}
-
+            }},
+            { "$addFields": { "stringId": { "$toString": "$_id" }}},
+            {$lookup: {
+                from : "classifications", 
+                localField: "stringId", 
+                foreignField: "recurso", 
+                as : "classificacao"
+            }},
         ])
         .exec()
 }
