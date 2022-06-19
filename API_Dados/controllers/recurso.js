@@ -344,6 +344,12 @@ module.exports.getRecursoAgr = id => {
                 foreignField: "recurso", 
                 as : "classificacao"
             }},
+            {$lookup: {
+                let: {"deleteUserId": {"$toObjectId": "$deleteUser"}}, 
+                from : "users", 
+                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$deleteUserId"]}}}], 
+                as : "deleteUtilizador"
+            }},
         ])
         .exec()
 }
