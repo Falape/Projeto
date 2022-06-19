@@ -2,6 +2,12 @@ var express = require('express');
 var router = express.Router();
 var axios = require('axios')
 
+function addMinutes(minutes) {
+  var MinutesLater = new Date();
+  MinutesLater.setMinutes(MinutesLater.getMinutes() + minutes);
+  return MinutesLater;
+}
+
 //get pagina login
 router.get('/', function (req, res) {
   res.render('login', { title: 'Express' });
@@ -14,7 +20,7 @@ router.post('/', function (req, res) {
     .then(dados => {
       //console.log(dados.data)
       res.cookie('data', dados.data, {   //guardar os dados num cookie
-        expires: new Date(Date.now() + '60m'),  //validade
+        expires: addMinutes(20),  //validade
         secure: false, // set to true if your using https
         httpOnly: true
       });
@@ -22,6 +28,7 @@ router.post('/', function (req, res) {
       res.redirect('/inicio')
     })
     .catch(e => res.render('error', { error: e }))
+    //res.redirect('/inicio')
 });
 
 //get página registo
@@ -36,7 +43,7 @@ router.post('/registar', function (req, res) {
     .then(dados => {
       console.log(dados.data)
       res.cookie('data', dados.data, {   //guardar os dados num cookie
-        expires: new Date(Date.now() + '60m'),  //validade
+        expires: addMinutes(20),  //validade
         secure: false, // set to true if your using https
         httpOnly: true
       });
