@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 var axios = require('axios')
 var storing = require('../public/javascripts/store')
+var verification = require('../public/javascripts/verifyFile')
+var fs = require('fs')
+
 const multer  = require('multer')
 var storage = multer.diskStorage({
     destination: './fileSystem/uploads',
@@ -10,7 +13,6 @@ var storage = multer.diskStorage({
     }
   });
 const upload = multer({ storage: storage })
-var fs = require('fs')
 
 router.get('/new', function (req, res) {
     console.log("ENTREI NO NOVO RECURSO1")
@@ -23,20 +25,25 @@ router.post('/new', upload.single('path'), function (req, res) {
     console.log(req.file)
     req.body.public = Boolean(req.body.public)
     console.log(req.body)
-    storing.StoreSIP(req.file.path).then((x)=>{
-        console.log("FINAL DIR =======================================> ", x) // este valor ainda não está a dar correcto.
-        // const newBody = {
-        //     path: x,
-        //     ...req.body
-        // }
-        req.body.path = x
-        console.log(req.body)
-        axios.post('http://localhost:7002/recursos?token=' + req.cookies.data.token, req.body)
-        .then(dados => {
-            console.log(dados.data)
-            res.redirect('/inicio')
-        })
-        .catch(e => res.render('error', { error: e }))
+    verification.verifyFile(req.file.path).then(verf => {
+        console.log(verf)
+        if (verf){
+            storing.StoreSIP(req.file.path).then((x)=>{
+                //console.log("FINAL DIR =======================================> ", x)
+                req.body.path = x
+                console.log(req.body)
+                axios.post('http://localhost:7002/recursos?token=' + req.cookies.data.token, req.body)
+                .then(dados => {
+                    console.log(dados.data)
+                    res.redirect('/inicio')
+                })
+                .catch(e => res.render('error', { error: e }))
+            })
+        }
+        else{
+            //render pagina de erro ??? --- quando chega aqui falha na verificação do .zip
+            res.redirect('new')
+        }
     })
     //res.redirect('/inicio')
 })
