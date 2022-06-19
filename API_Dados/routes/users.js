@@ -88,7 +88,7 @@ router.get('/addFollower/:id', function (req, res) {
 
 //Obtem followers de um User
 router.get('/getFollowers/:id', function (req, res) {
-    console.log("chega ao getFollowers")
+    
     console.log(req.params.id)
     console.log(req.user._id)
     User.getFollowers(req.params.id)
@@ -100,6 +100,7 @@ router.get('/getFollowers/:id', function (req, res) {
 });
 
 router.get('/getFollowing/:id', function (req, res) {
+    console.log("chega ao getFollowing")
     console.log(req.params.id)
     User.getFollowingAgr(req.params.id)
         .then(dados => {

@@ -14,7 +14,8 @@ router.get('/', function (req, res) {
 router.get('/following/:id', function (req, res) {
   axios.get('http://localhost:7002/users/getFollowing/' + req.params.id + '?token=' + req.cookies.data.token)
     .then(users => {
-      res.render('users', { navbar: req.cookies.data.userData, users: users.data, title:'Following' })
+      console.log(users.data[0].utilizador)
+      res.render('users', { navbar: req.cookies.data.userData, users: users.data[0].utilizador, title:'Following' })
     })
     .catch(e => res.render('error', { error: e }))
 });
