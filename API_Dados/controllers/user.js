@@ -1,5 +1,6 @@
 var User = require('../models/user')
 var mongoose = require("mongoose");
+ObjectId = require('mongodb').ObjectId;
 
 module.exports.getAllUsers = () => {
     return User
@@ -43,20 +44,22 @@ module.exports.getFollowing = id => {
         .exec()
 }
 
-// module.exports.getFollowingAgr = id => {
-//     return User
-//         .aggregate([
-//             {$match : {_id: id}},
-//             {$lookup: {
-//                 let: { "myFollowers" : "$followers" },
-//                 from : "users", 
-//                 pipeline: [{ "$addFields": { "stringId": { "$toString": "$_id" }}},{"$match": {"$expr": { "$in": ["$stringId" , "$$myFollowers"]}}}], 
-//                 as : "utilizador"
-//             }},
-//             {$sort : {data : 1}}
-//         ])
-//         .exec()
-// }
+
+module.exports.getFollowingAgr = id => {
+    id = ObjectId(id)
+    return User
+        .aggregate([
+            {$match : {_id: id}},
+            {$lookup: {
+                let: { "myFollowers" : "$followers" },
+                from : "users", 
+                pipeline: [{ "$addFields": { "stringId": { "$toString": "$_id" }}},{"$match": {"$expr": { "$in": ["$stringId" , "$$myFollowers"]}}}], 
+                as : "utilizador"
+            }},
+            {$sort : {data : 1}}
+        ])
+        .exec()
+}  
 
 
 // Devolve uma lista "myFollowers" com os id dos users que "me" seguem
@@ -107,6 +110,7 @@ module.exports.addFollower = (id,follower) =>{
 module.exports.unFollower = (id,followers) =>{
     console.log("string")
     console.log(followers)
+    id = ObjectId(id)
     return User
         .updateOne({ _id:  id},{followers: followers}); 
 }

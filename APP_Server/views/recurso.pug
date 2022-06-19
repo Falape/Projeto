@@ -2,6 +2,12 @@ extends layout
 
 block content
 
+    if recurso.deleted == true 
+        style.
+            body {
+              background-color: gray;
+            }
+
     div.container
         a(href='/users/'+userData._id)
             div.row
@@ -11,9 +17,18 @@ block content
     div.container
         div.row
             h2= recurso.title
-            p Classificação: FALTA, fazer join na querie
-            if flagLevel == 'admin' || flagLevel == 'dono'
-                button(class = 'secondary' onclick="window.location.href = '/deleteRecurso/"+ recurso._id +"?user=" + userData._id +"'") Delete
+            if recurso.classificacao.length == 0
+               p Classificação: 0
+            else
+               p Classificação: #{recurso.classificacao.classificacao}
+
+            if recurso.deleted == true
+                a(href="http://localhost:7003/recursos/recuperarRecurso/"+ recurso._id +"?user=" + userData._id)
+                        button(class = 'secondary') Recuperar
+            else   
+                if flagLevel == 'admin' || flagLevel == 'dono'
+                    a(href="http://localhost:7003/recursos/deleteRecurso/"+ recurso._id +"?user=" + userData._id)
+                        button(class = 'secondary') Delete
 
 
     div.container
@@ -25,7 +40,7 @@ block content
                     button(class = 'tertiary' onclick="window.location.href = '/editAuthor/"+ recurso._id +"'") Editar
         div.row
             p
-                if recurso.public==false 
+                if recurso.public==true 
                     b Estado:
                     | publico
                 else
@@ -41,6 +56,10 @@ block content
     if flagLevel != 'admin' && flagLevel != 'dono'
         div.container
             h3 Classificar
+            form(action='/recursos/classifica/'+recurso._id, method='POST')
+                span.label  Classificação: 
+                input(type='text', name='classificacao', value='')
+                input(class="button tertiary" type="submit" value="send")
     
     div.container
        h3 Comentários
@@ -60,7 +79,8 @@ block content
                                p= come.comentario
                         td.deleted  
                            div
-                               p Pagado por : fazer join do deleted 
+                               p Apagado por : 
+                                a(href='/users/'+come.deleteUser[0]._id)= come.deleteUser[0].username
                                p A #{come.deleteDate}
                else
                 table 
@@ -77,8 +97,8 @@ block content
                             div
                                 if flagLevel == 'admin' || come.user == navbar.id
                                    button(class = 'secondary' onclick="window.location.href = '/comentarios/deleteComentario/"+ come._id +"?recurso=" + recurso._id + "'") Delete
-
-    form(action='/comentarios/'+recurso._id, method='POST')
-        span.label  Comentário: 
-        input(type='text', name='comentario', value='')
-        input(class="button tertiary" type="submit" value="send")
+    if flagLevel != 'admin'
+        form(action='http://localhost:7003/comentarios/'+recurso._id, method='POST')
+            span.label  Comentário: 
+            input(type='text', name='comentario', value='')
+            input(class="button tertiary" type="submit" value="send")

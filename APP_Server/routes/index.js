@@ -31,6 +31,7 @@ router.get('/registar', function (req, res) {
 
 //post do registo
 router.post('/registar', function (req, res) {
+  console.log("entra")
   axios.post('http://localhost:7001/registo', req.body)
     .then(dados => {
       console.log(dados.data)
@@ -39,6 +40,7 @@ router.post('/registar', function (req, res) {
         secure: false, // set to true if your using https
         httpOnly: true
       });
+      console.log("chega?")
       res.redirect('/inicio')
     })
     .catch(e => res.render('error', { error: e }))
@@ -46,18 +48,32 @@ router.post('/registar', function (req, res) {
 
 
 //
+router.get('/public', function (req, res) {
+  console.log("entra")
+  console.log(req.cookies.data.token)
+  //axios.post('http://localhost:7002/recursos?token='+ req.cookies.data.token)
+  axios.post('http://localhost:7002/recursos/public?token=' + req.cookies.data.token,{})
+    .then(dados => {
+      console.log("guarda")
+      console.log(req.cookies.data.userData)//dados.data)
+      res.render('public', { navbar: req.cookies.data.userData, recursos: dados.data, title:'Feed Publico' })
+    })
+    .catch(e => res.render('error', { error: e }))
+}); 
+
 router.get('/inicio', function (req, res) {
   console.log("entra")
   console.log(req.cookies.data.token)
   //axios.post('http://localhost:7002/recursos?token='+ req.cookies.data.token)
-  axios.post('http://localhost:7002/recursos/public?token=' + req.cookies.data.token)
+  axios.post('http://localhost:7002/recursos/following?token=' + req.cookies.data.token,{})
     .then(dados => {
       console.log("guarda")
       console.log(req.cookies.data.userData)//dados.data)
-      res.render('public', { navbar: req.cookies.data.userData, recursos: dados.data })
+      res.render('public', { navbar: req.cookies.data.userData, recursos: dados.data, title:'Feed Noticias' })
     })
     .catch(e => res.render('error', { error: e }))
 });
+
 
 
 module.exports = router;

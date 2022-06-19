@@ -1,19 +1,51 @@
 extends layout 
+
 block content
-    h1 Informação do utilizador: 
-    p Username: 
-        span=user.username
-    p Level: 
-        span=user.level
-    p Descrição: 
-        span=user.descricao 
-    p Following: 
-        span=user.followers.length
-   
-    if myfollowers.length == 0
-        p Followers: 0
-    else
-        p Followers: #{myfollowers.length}
+    div.container
+    div.row
+        h1 Informação do utilizador: 
+            if flagSeguir == 'NaoSeguindo' && flagLevel != 'dono'
+                a(href="http://localhost:7003/users/follow/"+ user._id)
+                        button(class = 'tertiary') Seguir
+            else if flagSeguir == 'seguindo' && flagLevel != 'dono'
+                a(href="http://localhost:7003/users/unfollow/"+ user._id)
+                        button(class = 'secondary') Deixar de Seguir
+
+    if flagLevel == 'admin' || flagLevel == 'dono'
+        //a(href="http://localhost:7003/users/delete/"+ user._id)
+            button(class = 'secondary') ELIMINAR CONTA
+        
+        a(href="http://localhost:7003/users/editDados/"+ user._id)
+                            button(class = 'tertiary') Editar Conta
+        
+        a(href="http://localhost:7003/users/pedirPromocao/"+ user._id)
+                            button Pedir Promoção
+    div.container
+        div.row
+            div
+                input(type="image" src=user.image  width="90" height="90" )
+            div
+                p
+                    b Username:   
+                    | #{user.username}
+                p    
+                    b Level: 
+                    | #{user.level}  
+
+                p    
+                    b Descrição: 
+                    | #{user.descricao} 
+
+    
+    div.row
+        p 
+            a(href="http://localhost:7003/users/following/"+  user._id) Following: #{user.followers.length}
+    
+        if myfollowers.length == 0
+            p Followers: 0
+        else
+            p 
+                a(href="http://localhost:7003/users/followers/"+  user._id) Followers: #{myfollowers.length}
     h2 Os meus recursos: 
     table 
         tr 
@@ -22,13 +54,56 @@ block content
             th Classificação
             th Data
         each r in recursos
-            tr 
-                td
-                    a(href="/recursos/"+r._id)= r.title
-                td= user.username
-                //if r.classificacao.length == 0
-                    td 0/5
-                //else
-                    td=r.classificacao[0].classificacao /5
-                td= r.data
-            tr
+            if flagSeguir=='NaoSeguindo' && flagLevel == 'visitante'
+                if r.public == true
+                    tr 
+                        td
+                            a(href="/recursos/"+r._id)= r.title
+                        td= user.username
+                        //td
+                            if r.classificacao.length == 0
+                                p 0
+                            else
+                                p= r.classificacao[0].classificacao 
+                        td= r.data
+                    tr
+            else 
+                if flagSeguir=='seguindo' && flagLevel == 'visitante'
+                    tr 
+                        td
+                            a(href="/recursos/"+r._id)= r.title
+                        td= user.username
+                        td
+                            if r.classificacao.length == 0
+                                p 0
+                            else
+                                p= r.classificacao[0].classificacao 
+                        td= r.data
+                        td
+                    tr
+                else 
+                    if flagLevel == 'admin' || flagLevel == 'dono'
+                        if r.deleted==true
+                            tr 
+                                td.deleted
+                                    a(href="/recursos/"+r._id)= r.title
+                                td.deleted= user.username
+                                td.deleted
+                                    if r.classificacao.length == 0
+                                        p 0
+                                    else
+                                        p= r.classificacao[0].classificacao 
+                                td.deleted Apagado a #{r.deleteDate}
+                            tr
+                        else
+                            tr 
+                                td
+                                    a(href="/recursos/"+r._id)= r.title
+                                td= user.username
+                                td
+                                    if r.classificacao.length == 0
+                                        p 0
+                                    else
+                                        p= r.classificacao[0].classificacao 
+                                td= r.data
+                            tr

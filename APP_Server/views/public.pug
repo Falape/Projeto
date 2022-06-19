@@ -3,12 +3,21 @@ extends layout
 block content
    div.container
       div.row 
-        h1 Feed Noticias
+        h1= title
         form(action='/', method='POST')
          span.label  Titulo: 
            input(type='text', name='titulo', value='')
-         span.label tipo: 
-           input(type='text', name='tipo', value='')
+         span.label level: 
+                    select(name='level', value='level')
+                        option(value="null") -----
+                        option(value="testes/exames") Testes/exames
+                        option(value="slides") Slides
+                        option(value="manuais") Manuais 
+                        option(value="livros") Livros
+                        option(value="relatórios") Relatórios
+                        option(value="Tese_Mestrado") Tese Mestrado 
+                        option(value="Scripts") Scripts
+                        option(value="outros") Outros
          input(class="button tertiary" type="submit" value="search")
  
    table 
