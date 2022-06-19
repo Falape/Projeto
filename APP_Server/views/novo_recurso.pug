@@ -14,14 +14,10 @@ block content
                 b Tipo: 
                 input(type='text', name='tipo', value='')
             p 
-            span.label
-                b Público  
-                input(type='radio', name='public', value=True)
-            p
-            span.label
-                b Privado
-                input(type='radio', name='public', value=False)
-            p 
+            span.label level: 
+                    select(name='public', value='true')
+                        option(value="true") publico
+                        option(value="false") privado
             span.label 
                 b Data:
                 input(type='date', name='data', value='', style='margin-left: 5px 0 5px 5px')

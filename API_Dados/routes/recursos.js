@@ -120,43 +120,42 @@ router.post('/public', function (req, res) {
 });
 
 
-//recursos publicados pelos a seguir
-router.get('/following', function (req, res) {
-  console.log(req.query)
-  if (req.query['titulo'] != undefined && req.query['tipo'] != undefined) { //com filtro para o nome e titulo
-    User.getFollowing(req.user._id)
-      .then(dados =>
-        Recurso.getAllFollowWithNameAndTipo(dados, req.query['tipo'], req.query['titulo'])
-          .then(dadosRec => res.status(200).jsonp(dadosRec))
-          .catch(e => res.status(501).jsonp({ error: e })))
-      .catch(e => res.status(502).jsonp({ error: e }))
-  } else
-    if (req.query['titulo'] != undefined) { //com filtro para o titulo
-      User.getFollowing(req.user._id)
-        .then(dados =>
-          Recurso.getAllPublicWithName(dados, req.query['titulo'])
-            .then(dadosRec => res.status(200).jsonp(dadosRec))
-            .catch(e => res.status(501).jsonp({ error: e })))
-        .catch(e => res.status(502).jsonp({ error: e }))
-    } else
-      if (req.query['tipo'] != undefined) { //com filtro para tipo
-        User.getFollowing(req.user._id)
-          .then(dados =>
-            Recurso.getAllPublicWithTipo(dados, req.query['tipo'])
-              .then(dadosRec => res.status(200).jsonp(dadosRec))
-              .catch(e => res.status(501).jsonp({ error: e })))
-          .catch(e => res.status(502).jsonp({ error: e }))
-      } else
-
-        User.getFollowing(req.user._id)
-          .then(dados => {
-            console.log(dados)
-            Recurso.getAllFollow(dados.followers)
-              .then(dadosRec => res.status(200).jsonp(dadosRec))
-              .catch(e => res.status(501).jsonp({ error: e }))
-          })
-          .catch(e => res.status(502).jsonp({ error: e }))
-});
+// //recursos publicados pelos a seguir
+// router.get('/following', function (req, res) {
+//   console.log(req.query)
+//   if (req.query['titulo'] != undefined && req.query['tipo'] != undefined) { //com filtro para o nome e titulo
+//     User.getFollowing(req.user._id)
+//       .then(dados =>
+//         Recurso.getAllFollowWithNameAndTipo(dados, req.query['tipo'], req.query['titulo'])
+//           .then(dadosRec => res.status(200).jsonp(dadosRec))
+//           .catch(e => res.status(501).jsonp({ error: e })))
+//       .catch(e => res.status(502).jsonp({ error: e }))
+//   } else
+//     if (req.query['titulo'] != undefined) { //com filtro para o titulo
+//       User.getFollowing(req.user._id)
+//         .then(dados =>
+//           Recurso.getAllPublicWithName(dados, req.query['titulo'])
+//             .then(dadosRec => res.status(200).jsonp(dadosRec))
+//             .catch(e => res.status(501).jsonp({ error: e })))
+//         .catch(e => res.status(502).jsonp({ error: e }))
+//     } else
+//       if (req.query['tipo'] != undefined) { //com filtro para tipo
+//         User.getFollowing(req.user._id)
+//           .then(dados =>
+//             Recurso.getAllPublicWithTipo(dados, req.query['tipo'])
+//               .then(dadosRec => res.status(200).jsonp(dadosRec))
+//               .catch(e => res.status(501).jsonp({ error: e })))
+//           .catch(e => res.status(502).jsonp({ error: e }))
+//       } else
+//         User.getFollowing(req.user._id)
+//           .then(dados => {
+//             console.log(dados)
+//             Recurso.getAllFollow(dados.followers)
+//               .then(dadosRec => res.status(200).jsonp(dadosRec))
+//               .catch(e => res.status(501).jsonp({ error: e }))
+//           })
+//           .catch(e => res.status(502).jsonp({ error: e }))
+// });
 
 router.post('/following', function (req, res) {
 
@@ -184,6 +183,7 @@ router.post('/following', function (req, res) {
     console.log("sem filtros")
     Recurso.getAllFollow()
       .then(dados => {
+        console.log("COISAS")
         console.log(dados)
         res.status(200).jsonp(dados)
       })

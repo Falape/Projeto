@@ -23,7 +23,13 @@ router.get('/new', function (req, res) {
 router.post('/new', upload.single('path'), function (req, res) {
     console.log("ENTREI NO NOVO RECURSO2")
     console.log(req.file)
-    req.body.public = Boolean(req.body.public)
+    console.log(req.body)
+    if(req.body.public == "true"){
+        req.body.public = true
+    }
+    else{
+        req.body.public = false
+    }
     console.log(req.body)
     verification.verifyFile(req.file.path).then(verf => {
         console.log(verf)
