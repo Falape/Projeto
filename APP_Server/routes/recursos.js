@@ -90,6 +90,15 @@ router.get('/deleteRecurso/:id', function (req, res) {
         .catch(e => res.render('error', { error: e }))
 })
 
+router.get('/recuperarRecurso/:id', function (req, res) {
+    axios.get('http://localhost:7002/recursos/recupera/' + req.params.id + '?token=' + req.cookies.data.token)
+        .then(dados => {
+            console.log(dados.data)
+            res.redirect('/' + req.params.id)
+        })
+        .catch(e => res.render('error', { error: e }))
+})
+
 router.get('/download/:id', function (req, res) {
     axios.get('http://localhost:7002/recursos/' + req.params.id + '?token=' + req.cookies.data.token)
     .then(dados => {
@@ -135,21 +144,23 @@ router.get('/:id', function (req, res) {
             if(dados.data[0].deletedUser == req.cookies.data.userData.id)
                 flagQuemApagou = 'dono'
             else 
-                if(dados.data[0].deleted == true && dados.data[0].deletedUtilizador.level == 'admin')
-                    flagQuemApagou = 'admin'
+               if(dados.data[0].deleted == true && dados.data[0].deletedUtilizador.level == 'admin')
 
-            var flagLevel
+                    flagQuemApagou = 'admin'
+                else
+                    flagQuemApagou = 'visitante'
+            
+                    var flagLevel
             if (req.cookies.data.userData.level == 'admin') {
-            flagLevel = 'admin'
-            res.render('recurso', { navbar: req.cookies.data.userData, userData: dados.data[0].utilizador[0], recurso: dados.data[0], flagLevel:flagLevel, comentarios:dadosRec.data, ficheiros: files, zip_name: zip_name})
+                flagLevel = 'admin'
             } else
             if (dados.data[0].user == req.cookies.data.userData.id) {
                 flagLevel = 'dono'
-                res.render('recurso', { navbar: req.cookies.data.userData, userData: dados.data[0].utilizador[0], recurso: dados.data[0], flagLevel:flagLevel, comentarios:dadosRec.data, ficheiros: files, zip_name: zip_name })
+                
             } else {
                 flagLevel = 'visitante'
-                res.render('recurso', { navbar: req.cookies.data.userData, userData: dados.data[0].utilizador[0], recurso: dados.data[0], flagLevel:flagLevel, comentarios:dadosRec.data, ficheiros: files, zip_name: zip_name })
             }
+            res.render('recurso', { navbar: req.cookies.data.userData, userData: dados.data[0].utilizador[0], recurso: dados.data[0], flagLevel:flagLevel, comentarios:dadosRec.data, ficheiros: files, zip_name: zip_name, flagQuemApagou: flagQuemApagou })
             // console.log("guarda")
             // console.log(dados.data[0])//dados.data
         })
