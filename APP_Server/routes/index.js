@@ -52,7 +52,7 @@ router.get('/public', function (req, res) {
   console.log("entra")
   console.log(req.cookies.data.token)
   //axios.post('http://localhost:7002/recursos?token='+ req.cookies.data.token)
-  axios.post('http://localhost:7002/recursos/public?token=' + req.cookies.data.token)
+  axios.post('http://localhost:7002/recursos/public?token=' + req.cookies.data.token,{})
     .then(dados => {
       console.log("guarda")
       console.log(req.cookies.data.userData)//dados.data)
@@ -65,7 +65,7 @@ router.get('/inicio', function (req, res) {
   console.log("entra")
   console.log(req.cookies.data.token)
   //axios.post('http://localhost:7002/recursos?token='+ req.cookies.data.token)
-  axios.post('http://localhost:7002/recursos/following?token=' + req.cookies.data.token)
+  axios.post('http://localhost:7002/recursos/following?token=' + req.cookies.data.token,{})
     .then(dados => {
       console.log("guarda")
       console.log(req.cookies.data.userData)//dados.data)

@@ -18,7 +18,7 @@ block content
             a(href='/users/'+u._id)
                 form(action='/users/'+ u._id, method='GET')
                     div.row
-                        input(type="image" src=u.path  width="75" height="75" )
+                        input(type="image" src=u.image  width="75" height="75" )
                         div.col
                             h4= u.username
                             p= u.level
