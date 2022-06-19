@@ -42,7 +42,7 @@ app.post("/registo", function (req, res) {
   User.register(new User({ username: req.body.username, email: req.body.email, image:"/images/penguim2.png", level: 'consumer'}), req.body.password, function (err, user) {
     if (err) {
       console.log(err);
-      return res.status(400).jsonp({
+      return res.status(500).jsonp({
         message: 'Erro no registo', user: user
       });
     }

@@ -112,6 +112,8 @@ router.get('/download/:id', function (req, res) {
                 zip_name = zip_files[fich]
             }
         }
+        //download
+        res.download(dados.data[0].path + '/' + zip_name)
     })
     .catch(e => res.render('error', { error: e }))
 })
@@ -142,7 +144,8 @@ router.get('/:id', function (req, res) {
             if(dados.data[0].deletedUser == req.cookies.data.userData.id)
                 flagQuemApagou = 'dono'
             else 
-                if(dados.data[0].deleted == true && dados.data[0].deleteUtilizador.level == 'admin')
+               if(dados.data[0].deleted == true && dados.data[0].deletedUtilizador.level == 'admin')
+
                     flagQuemApagou = 'admin'
                 else
                     flagQuemApagou = 'visitante'
