@@ -1,6 +1,16 @@
 var express = require('express');
 var router = express.Router();
 var axios = require('axios')
+var storing = require('../public/javascripts/store')
+const multer  = require('multer')
+var storage = multer.diskStorage({
+    destination: './fileSystem/uploads',
+    filename: function(req, file, callback) {
+      callback(null, file.originalname);
+    }
+  });
+const upload = multer({ storage: storage })
+var fs = require('fs')
 
 router.get('/new', function (req, res) {
     console.log("ENTREI NO NOVO RECURSO1")
@@ -8,18 +18,27 @@ router.get('/new', function (req, res) {
     res.render('novo_recurso', { navbar: req.cookies.data.userData, userId: req.cookies.data.userData.id})
 })
 
-router.post('/new', function (req, res) {
+router.post('/new', upload.single('path'), function (req, res) {
     console.log("ENTREI NO NOVO RECURSO2")
-    console.log(req.body)
-    console.log(req.body.public)
+    console.log(req.file)
     req.body.public = Boolean(req.body.public)
     console.log(req.body)
-    axios.post('http://localhost:7002/recursos?token=' + req.cookies.data.token, req.body)
-    .then(dados => {
-        console.log(dados.data)
-        res.redirect('/inicio')
+    storing.StoreSIP(req.file.path).then((x)=>{
+        console.log("FINAL DIR =======================================> ", x) // este valor ainda não está a dar correcto.
+        // const newBody = {
+        //     path: x,
+        //     ...req.body
+        // }
+        req.body.path = x
+        console.log(req.body)
+        axios.post('http://localhost:7002/recursos?token=' + req.cookies.data.token, req.body)
+        .then(dados => {
+            console.log(dados.data)
+            res.redirect('/inicio')
+        })
+        .catch(e => res.render('error', { error: e }))
     })
-    .catch(e => res.render('error', { error: e }))
+    //res.redirect('/inicio')
 })
 
 

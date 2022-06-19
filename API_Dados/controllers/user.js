@@ -43,6 +43,22 @@ module.exports.getFollowing = id => {
         .exec()
 }
 
+// module.exports.getFollowingAgr = id => {
+//     return User
+//         .aggregate([
+//             {$match : {_id: id}},
+//             {$lookup: {
+//                 let: { "myFollowers" : "$followers" },
+//                 from : "users", 
+//                 pipeline: [{ "$addFields": { "stringId": { "$toString": "$_id" }}},{"$match": {"$expr": { "$in": ["$stringId" , "$$myFollowers"]}}}], 
+//                 as : "utilizador"
+//             }},
+//             {$sort : {data : 1}}
+//         ])
+//         .exec()
+// }
+
+
 // Devolve uma lista "myFollowers" com os id dos users que "me" seguem
 // db.users.aggregate([
 //     {$match : {followers: "62ab68fea4bbfa4215977f20"}},
