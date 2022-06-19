@@ -2,6 +2,12 @@ extends layout
 
 block content
 
+    if recurso.deleted == true 
+        style.
+            body {
+              background-color: gray;
+            }
+
     div.container
         a(href='/users/'+userData._id)
             div.row
@@ -16,9 +22,13 @@ block content
             else
                p Classificação: #{recurso.classificacao.classificacao}
 
-            if flagLevel == 'admin' || flagLevel == 'dono'
-                a(href="http://localhost:7003/recursos/deleteRecurso/"+ recurso._id +"?user=" + userData._id)
-                    button(class = 'secondary') Delete
+            if recurso.deleted == true
+                a(href="http://localhost:7003/recursos/recuperarRecurso/"+ recurso._id +"?user=" + userData._id)
+                        button(class = 'secondary') Recuperar
+            else   
+                if flagLevel == 'admin' || flagLevel == 'dono'
+                    a(href="http://localhost:7003/recursos/deleteRecurso/"+ recurso._id +"?user=" + userData._id)
+                        button(class = 'secondary') Delete
 
 
     div.container
