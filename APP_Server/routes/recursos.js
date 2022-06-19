@@ -103,6 +103,13 @@ router.get('/:id', function (req, res) {
         .then(dadosRec => {
             console.log("dados comments")
             //console.log(dadosRec.data[0])
+            var flagQuemApagou
+            if(dados.data[0].deletedUser == req.cookies.data.userData.id)
+                flagQuemApagou = 'dono'
+            else 
+                if(dados.data[0].deletedUtilizador.level == 'admin')
+                    flagQuemApagou = 'admin'
+
             var flagLevel
             if (req.cookies.data.userData.level == 'admin') {
             flagLevel = 'admin'
