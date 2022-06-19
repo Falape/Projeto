@@ -12,7 +12,12 @@ html
                 | Email: 
                 input(type='email', name='email', value='')
                 | Password: 
-                input(type='password', name='password', value='')
+                input(type='password', name='password', value='') 
+                span.label 
+                    b Estado: 
+                    select(name='level')
+                        option(value="producer") producer
+                        option(value="consumer") consumer
             button(class='primary', value='Submit') Submeter
         adress 
             a(href="/") voltar para página de login
