@@ -2,12 +2,13 @@ extends layout
 block content
     div.container
         div.row 
-            h1 Utilizadores: 
+            h1 #{title}: 
             form(action='/', method='POST')
                 span.label  username: 
                     input(type='text', name='username', value='')
                 span.label level: 
-                    select(name='level', value='selecione o level')
+                    select(name='level', value='level')
+                        option(value="null") -----
                         option(value="admin") admin
                         option(value="producer") producer
                         option(value="consumer") consumer 

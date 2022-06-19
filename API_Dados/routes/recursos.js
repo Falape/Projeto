@@ -73,7 +73,7 @@ router.get('/userRecurso/:id', function (req, res) {
     .then(dados => {
       if (dados.followers.includes(req.params.id) || req.user.level == 'admin') {
         Recurso.getRecFromUser(req.params.id)
-          .then(dados => { 
+          .then(dados => {
             console.log(dados)
             res.status(200).jsonp(dados)
           })
@@ -214,17 +214,25 @@ router.post('/alteraAuthor/:id', function (req, res) {
 //Obtem a classicação de um recurso VOU TER DE DAR JOIN DISTO
 router.post('/classifica/:id', function (req, res) {
   console.log(req.params.id)
-  console.log(req.body.author)
-  cl.getRecurso(req.params.id)
+  console.log(req.body)
+  Classificacao.getClassificacaoAll(req.params.id)
     .then(dados => {
-      if (dados[0].user == req.user._id || req.user.level == 'admin') {
-        Recurso.alterarAuthor(req.params.id, req.body.author)
-          .then(dados => res.status(200).jsonp(dados))
-          .catch(e => res.status(501).jsonp({ error: e }))
-      } else
-        res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
+      console.log(dados)
+      console.log("Adiciona a classifcação1")
+      console.log(parseInt(dados.numClassif))
+      var classifi = parseInt((parseInt(dados.numClassif) * parseInt(dados.classificacao)) + parseInt(req.body.classificacao) / (parseInt(dados.numClassif) + 1))
+      console.log(classifi)
+      Classificacao.giveClassificacao(req.params.id, classifi, req.user._id)
+        .then(dadosR => {
+          console.log("Adiciona a classifcação2")
+          res.status(200).jsonp(dadosR)
+          //res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
+        })
+        .catch(e => res.status(501).jsonp({ error: e }))
     })
+    //res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
     .catch(e => res.status(501).jsonp({ error: e }))
+
 });
 
 
@@ -288,10 +296,10 @@ router.get('/:id', function (req, res) {
               .then(dadosRec => {
                 console.log("aqui é os followers")
                 console.log(dadosRec)
-                if(dadosRec[0].contains(dados[0].user)){
+                if (dadosRec[0].contains(dados[0].user)) {
                   res.status(200).jsonp(dados)
-                }else
-                res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
+                } else
+                  res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
               })
               .catch(e => res.status(501).jsonp({ error: e }))
 

@@ -1,19 +1,44 @@
 extends layout 
+
 block content
+    div.container
+        
     h1 Informação do utilizador: 
-    p Username: 
-        span=user.username
-    p Level: 
-        span=user.level
-    p Descrição: 
-        span=user.descricao 
-    p Following: 
-        span=user.followers.length
-   
-    if myfollowers.length == 0
-        p Followers: 0
-    else
-        p Followers: #{myfollowers.length}
+    if flagLevel == 'admin' || flagLevel == 'dono'
+        //a(href="http://localhost:7003/users/delete/"+ user._id)
+            button(class = 'secondary') ELIMINAR CONTA
+        
+        a(href="http://localhost:7003/users/editDados/"+ user._id)
+                            button(class = 'tertiary') Editar Conta
+        
+        a(href="http://localhost:7003/users/pedirPromocao/"+ user._id)
+                            button Pedir Promoção
+    div.container
+        div.row
+            div
+                input(type="image" src=user.path  width="80" height="80" )
+            div
+                p
+                    b Username:   
+                    | #{user.username}
+                p    
+                    b Level: 
+                    | #{user.level}  
+
+                p    
+                    b Descrição: 
+                    | #{user.descricao} 
+
+    
+    div.row
+        p 
+            a(href="http://localhost:7003/users/following/"+  user._id) Following: #{user.followers.length}
+    
+        if myfollowers.length == 0
+            p Followers: 0
+        else
+            p 
+                a(href="http://localhost:7003/users/followers/"+  user._id) Followers: #{myfollowers.length}
     h2 Os meus recursos: 
     table 
         tr 
@@ -26,9 +51,10 @@ block content
                 td
                     a(href="/recursos/"+r._id)= r.title
                 td= user.username
-                //if r.classificacao.length == 0
-                    td 0/5
-                //else
-                    td=r.classificacao[0].classificacao /5
+                //td
+                    if r.classificacao.length == 0
+                        p 0
+                    else
+                        p= r.classificacao[0].classificacao 
                 td= r.data
             tr

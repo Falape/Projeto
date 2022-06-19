@@ -21,6 +21,12 @@ module.exports.getClassificacao = id => {
         .exec()
 }
 
+module.exports.getClassificacaoAll = id => {
+    return Classificacao
+        .find({recurso:id})
+        .exec()
+}
+
 
 //adicionar uma classificação, tenho de dar a classificação  final, o id do recurso e o user que deu a classificação
 module.exports.giveClassificacao = (id,classificacao,user) => {

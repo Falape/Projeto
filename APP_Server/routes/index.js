@@ -31,6 +31,7 @@ router.get('/registar', function (req, res) {
 
 //post do registo
 router.post('/registar', function (req, res) {
+  console.log("entra")
   axios.post('http://localhost:7001/registo', req.body)
     .then(dados => {
       console.log(dados.data)
@@ -39,6 +40,7 @@ router.post('/registar', function (req, res) {
         secure: false, // set to true if your using https
         httpOnly: true
       });
+      console.log("chega?")
       res.redirect('/inicio')
     })
     .catch(e => res.render('error', { error: e }))

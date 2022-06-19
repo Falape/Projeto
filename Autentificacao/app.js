@@ -39,7 +39,7 @@ app.use(logger('dev'));
 app.post("/registo", function (req, res) {
   console.log(req.body);
   //console.log(req.body.password);
-  User.register(new User({ username: req.body.username, email: req.body.email, level: 'consumer', path:"/images/penguim2.png"}), req.body.password, function (err, user) {
+  User.register(new User({ username: req.body.username, email: req.body.email, image:"/images/penguim2.png", level: 'consumer'}), req.body.password, function (err, user) {
     if (err) {
       console.log(err);
       return res.status(400).jsonp({
@@ -61,6 +61,7 @@ app.post("/registo", function (req, res) {
         userTosend.id = user._id
         userTosend.level = user.level
         userTosend.username = user.username
+        userTosend.image = user.image
         jwt.sign({ _id:user._id, level: user.level, username: user.username}, 'O Ramalho e fixe',
                 {expiresIn: '60m'}, 
                 function(e, token){
