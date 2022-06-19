@@ -22,7 +22,8 @@ block content
             else
                p Classificação: #{recurso.classificacao.classificacao}
 
-            if recurso.deleted == true
+            if recurso.deleted == true 
+                if flagLevel == 'admin' || (flagLevel == 'dono' && flagQuemApagou=='dono')
                 a(href="http://localhost:7003/recursos/recuperarRecurso/"+ recurso._id +"?user=" + userData._id)
                         button(class = 'secondary') Recuperar
             else   
@@ -70,7 +71,7 @@ block content
 
 
     
-    if flagLevel != 'admin' && flagLevel != 'dono'
+    if flagLevel != 'admin' && flagLevel != 'dono' && recurso.deleted == false
         div.container
             h3 Classificar
             form(action='/recursos/classifica/'+recurso._id, method='POST')
@@ -114,7 +115,8 @@ block content
                             div
                                 if flagLevel == 'admin' || come.user == navbar.id
                                    button(class = 'secondary' onclick="window.location.href = '/comentarios/deleteComentario/"+ come._id +"?recurso=" + recurso._id + "'") Delete
-    if flagLevel != 'admin'
+    
+    if flagLevel != 'admin' && recurso.deleted == false
         form(action='http://localhost:7003/comentarios/'+recurso._id, method='POST')
             span.label  Comentário: 
             input(type='text', name='comentario', value='')

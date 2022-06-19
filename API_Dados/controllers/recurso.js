@@ -385,7 +385,9 @@ module.exports.inserir = recurso => {
     recurso.data = data.toISOString().substring(0, 16)
     recurso.deleted=false
     recurso.deleteDate = ''
+
     recurso.deleteUser = 'aaaaaaaaaaaaaaaaaaaaaaaa'
+
     var newRecurso = new Recurso(recurso)
 
     return newRecurso.save()
