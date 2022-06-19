@@ -90,15 +90,41 @@ router.get('/deleteRecurso/:id', function (req, res) {
         .catch(e => res.render('error', { error: e }))
 })
 
+router.get('/download/:id', function (req, res) {
+    axios.get('http://localhost:7002/recursos/' + req.params.id + '?token=' + req.cookies.data.token)
+    .then(dados => {
+        console.log("VER AQUUIIIIIIIIIII")
+        console.log(dados.data[0])
+        var zip_name = ""
+        var zip_files = fs.readdirSync(dados.data[0].path);
+        for (fich in zip_files){
+            let tmp = zip_files[fich].split('.').pop()
+            if (tmp == "zip"){
+                zip_name = zip_files[fich]
+            }
+        }
+    })
+    .catch(e => res.render('error', { error: e }))
+})
+
 
 router.get('/:id', function (req, res) {
     console.log("entra")
     console.log(req.cookies.data.token)
     //axios.post('http://localhost:7002/recursos?token='+ req.cookies.data.token)
     axios.get('http://localhost:7002/recursos/' + req.params.id + '?token=' + req.cookies.data.token)
-        .then(dados => {
-            console.log("VER AQUUIIIIIIIIIII")
-            console.log(dados.data[0])
+    .then(dados => {
+        console.log("VER AQUUIIIIIIIIIII")
+        console.log(dados.data[0])
+        var zip_name = ""
+        var files = fs.readdirSync(dados.data[0].path + '/unziped');
+        var zip_files = fs.readdirSync(dados.data[0].path);
+        for (fich in zip_files){
+            let tmp = zip_files[fich].split('.').pop()
+            if (tmp == "zip"){
+                zip_name = zip_files[fich]
+            }
+        }
         axios.get('http://localhost:7002/comments/recurso/' + req.params.id + '?token=' + req.cookies.data.token)
         .then(dadosRec => {
             console.log("dados comments")
@@ -106,14 +132,14 @@ router.get('/:id', function (req, res) {
             var flagLevel
             if (req.cookies.data.userData.level == 'admin') {
             flagLevel = 'admin'
-            res.render('recurso', { navbar: req.cookies.data.userData, userData: dados.data[0].utilizador[0], recurso: dados.data[0], flagLevel:flagLevel, comentarios:dadosRec.data})
+            res.render('recurso', { navbar: req.cookies.data.userData, userData: dados.data[0].utilizador[0], recurso: dados.data[0], flagLevel:flagLevel, comentarios:dadosRec.data, ficheiros: files, zip_name: zip_name})
             } else
             if (dados.data[0].user == req.cookies.data.userData.id) {
                 flagLevel = 'dono'
-                res.render('recurso', { navbar: req.cookies.data.userData, userData: dados.data[0].utilizador[0], recurso: dados.data[0], flagLevel:flagLevel, comentarios:dadosRec.data })
+                res.render('recurso', { navbar: req.cookies.data.userData, userData: dados.data[0].utilizador[0], recurso: dados.data[0], flagLevel:flagLevel, comentarios:dadosRec.data, ficheiros: files, zip_name: zip_name })
             } else {
                 flagLevel = 'visitante'
-                res.render('recurso', { navbar: req.cookies.data.userData, userData: dados.data[0].utilizador[0], recurso: dados.data[0], flagLevel:flagLevel, comentarios:dadosRec.data })
+                res.render('recurso', { navbar: req.cookies.data.userData, userData: dados.data[0].utilizador[0], recurso: dados.data[0], flagLevel:flagLevel, comentarios:dadosRec.data, ficheiros: files, zip_name: zip_name })
             }
             // console.log("guarda")
             // console.log(dados.data[0])//dados.data

@@ -1,7 +1,7 @@
 extends layout
-
 block content
-
+    script(src='/javascripts/jquery-3.6.0.min.js')
+    script(src='/javascripts/recurso_script.js')
     if recurso.deleted == true 
         style.
             body {
@@ -41,17 +41,34 @@ block content
         div.row
             p
                 if recurso.public==true 
-                    b Estado:
+                    b Estado: 
                     | publico
                 else
-                    b Estado:
+                    b Estado: 
                     | privado
                 if flagLevel == 'admin' || flagLevel == 'dono'
                     button(class = 'tertiary' onclick="window.location.href = '/editEstado/"+ recurso._id +"'") Editar
 
     div.container
         h3 Conteudos 
-        p Tabela ou algo do género
+    
+        div.container 
+            table
+                tr 
+                    th Nome 
+                    th  
+                each f in ficheiros 
+                    tr 
+                        td Nome: #{f}
+                        td 
+                            button(class = 'primary') Ver
+                    tr
+                tr 
+                    td Zip: #{zip_name}
+                    td
+                        button(class = 'secondary' onclick="window.location.href = 'download/"+ recurso._id +"'") Download
+
+
     
     if flagLevel != 'admin' && flagLevel != 'dono'
         div.container
