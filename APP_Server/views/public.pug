@@ -3,7 +3,7 @@ extends layout
 block content
    div.container
       div.row 
-        h1 Feed Noticias
+        h1= title
         form(action='/', method='POST')
          span.label  Titulo: 
            input(type='text', name='titulo', value='')

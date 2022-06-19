@@ -12,9 +12,9 @@ router.get('/', function (req, res) {
 });
 
 router.get('/following/:id', function (req, res) {
-  axios.get('http://localhost:7002/users/?token=' + req.cookies.data.token)
+  axios.get('http://localhost:7002/users/getFollowing/' + req.params.id + '?token=' + req.cookies.data.token)
     .then(users => {
-      res.render('users', { navbar: req.cookies.data.userData, users: users.data, title:'Utilizadores' })
+      res.render('users', { navbar: req.cookies.data.userData, users: users.data, title:'Following' })
     })
     .catch(e => res.render('error', { error: e }))
 });
@@ -23,7 +23,7 @@ router.get('/followers/:id', function (req, res) {
   axios.get('http://localhost:7002/users/getFollowers/'+ req.params.id+ '?token=' + req.cookies.data.token)
     .then(users => {
       console.log(users)
-      res.render('users', { navbar: req.cookies.data.userData, users: users.data, title:'Utilizadores', title:"Followers" })
+      res.render('users', { navbar: req.cookies.data.userData, users: users.data, title:"Followers" })
     })
     .catch(e => res.render('error', { error: e }))
 });
@@ -54,6 +54,8 @@ router.get('/:id', function (req, res) {
           console.log("dados: ", recursos.data)
           axios.get('http://localhost:7002/users/getFollowers/' + req.params.id + '?token=' + req.cookies.data.token)
             .then(myfollowers => {
+              console.log("VER AQUII")
+              console.log(myfollowers.data)
               var flagLevel
               if (req.cookies.data.userData.level == 'admin') {
                 flagLevel = 'admin'
