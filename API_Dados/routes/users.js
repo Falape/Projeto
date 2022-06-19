@@ -112,6 +112,17 @@ router.get('/getFollowing/:id', function (req, res) {
         .catch(e => res.status(501).jsonp({ error: e }))
 });
 
+// router.get('/getFollowingListId/:id', function (req, res) {
+//     console.log("chega ao getFollowing")
+//     console.log(req.params.id)
+//     User.getFollowing(req.params.id)
+//         .then(dados => {
+//             console.log(dados)
+//             res.status(200).jsonp(dados)
+//         })
+//         .catch(e => res.status(501).jsonp({ error: e }))
+// });
+
 //remove um follower
 router.get('/unFollow/:id', function (req, res) {
     //console.log(req.params.id)

@@ -39,6 +39,7 @@ app.use(function(req, res, next){
       next()
     } 
   })
+  //.catch(e => res.status(401).jsonp({error: 'Erro token inválido: ' + e}))
   if(req.body['token'] != undefined){
     delete req.body['token']
   }

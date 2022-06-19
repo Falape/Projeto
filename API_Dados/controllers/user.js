@@ -40,7 +40,7 @@ module.exports.getUserByNameAndlvl = (nome,lvl) => {
 //Talvez fazer agregação para já obter o id, nome e pathImagem
 module.exports.getFollowing = id => {
     return User
-        .findOne({_id: id},{followers:1})
+        .findOne({_id: id},{_id:0, followers:1})
         .exec()
 }
 
