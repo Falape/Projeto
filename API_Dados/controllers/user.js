@@ -44,6 +44,7 @@ module.exports.getFollowing = id => {
         .exec()
 }
 
+
 module.exports.getFollowingAgr = id => {
     id = ObjectId(id)
     return User
@@ -59,6 +60,7 @@ module.exports.getFollowingAgr = id => {
         ])
         .exec()
 }  
+
 
 // Devolve uma lista "myFollowers" com os id dos users que "me" seguem
 // db.users.aggregate([

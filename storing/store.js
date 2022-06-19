@@ -84,9 +84,9 @@ function StoreSIP(zip_name){
 }
 
 // Executar desta forma:
-StoreSIP('template.zip').then((x)=>{
-    console.log("FINAL DIR =======================================> ", x) // este valor ainda não está a dar correcto.
-})
+// StoreSIP('template.zip').then((x)=>{
+//     console.log("FINAL DIR =======================================> ", x) // este valor ainda não está a dar correcto.
+// })
 
 // Desta forma a promessa fica pendente, desta maneira a variavel não tem o resultado:
 // x = StoreSIP('template4.zip')
