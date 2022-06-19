@@ -18,7 +18,8 @@ block content
                         option(value="Tese_Mestrado") Tese Mestrado 
                         option(value="Scripts") Scripts
                         option(value="outros") Outros
-         input(class="button tertiary" type="submit" value="search")
+         // input(class="button tertiary" type="" value="search")              
+        button(class="small tertiary") search
  
    table 
       tr 
@@ -28,16 +29,17 @@ block content
       each a in recursos
         tr(href="http://localhost:7003/recursos/"+ a._id)
           td
-            b 
-             a(href="/recursos/"+ a._id)= a.title
-            p Data #{a.data}
+            div.row
+              h3 
+               a(href="/recursos/"+ a._id)= a.title
+              p Data #{a.data}
           td
             a(href='/users/'+a.utilizador[0]._id)
                div.row
-                  input(type="image" src=a.utilizador[0].path  width="30" height="30" )
+                  input(type="image" src=a.utilizador[0].image  width="30" height="30" )
                   p= a.utilizador[0].username
           td 
             if a.classificacao.length == 0
-               p Classificação: 0
+               p 0
             else
-               p Classificação: #{a.classificacao.classificacao}
+               p= a.classificacao[0].classificacao

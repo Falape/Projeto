@@ -88,31 +88,26 @@ router.get('/userRecurso/:id', function (req, res) {
     .catch(e => res.status(501).jsonp({ error: e }))
 });
 
-//recursos públicos
+//recursos públicos(expolkicação identica à de baixo)
 router.post('/public', function (req, res) {
 
-  console.log("entra")
   if (Object.keys(req.body).length != 0) {
-    console.log("entra Public")
     if (req.body[0]['titulo'] != undefined && req.body[0]['tipo'] != undefined) { //com filtro para o nome e titulo
       Recurso.getAllPublicWithNameAndTipo(req.body[0]['tipo'], req.body[0]['titulo'])
         .then(dados => res.status(200).jsonp(dados))
         .catch(e => res.status(501).jsonp({ error: e }))
     } else
       if (req.body[0]['titulo'] != undefined) { //com filtro para o titulo
-        console.log("filtro titulo ", req.body[0]['titulo'])
         Recurso.getAllPublicWithName(req.body[0]['titulo'])
           .then(dados => res.status(200).jsonp(dados))
           .catch(e => res.status(501).jsonp({ error: e }))
       } else
         if (req.body[0]['tipo'] != undefined) { //com filtro para tipo
-          console.log("sem filtros")
           Recurso.getAllPublicWithTipo(req.body[0]['tipo'])
             .then(dados => res.status(200).jsonp(dados))
             .catch(e => res.status(501).jsonp({ error: e }))
         }
   } else {
-    console.log("sem filtros")
     Recurso.getAllPublic()
       .then(dados => res.status(200).jsonp(dados))
       .catch(e => res.status(501).jsonp({ error: e }))
@@ -121,36 +116,32 @@ router.post('/public', function (req, res) {
 
 router.post('/following', function (req, res) {
 
-  console.log("entra")
   User.getFollowing(req.user._id)
     .then(followList => {
-      console.log(followList.followers)
+      //como é um post verifico se o body vem vazio assim não tem filtros
       if (followList.followers.length != 0) {
         if (Object.keys(req.body).length != 0) {
-          console.log("entra Public")
+          //tem os dois filtros
           if (req.body[0]['titulo'] != undefined && req.body[0]['tipo'] != undefined) { //com filtro para o nome e titulo
             Recurso.getAllFollowWithNameAndTipo(followList.followers,req.body[0]['tipo'], req.body[0]['titulo'])
               .then(dados => res.status(200).jsonp(dados))
               .catch(e => res.status(501).jsonp({ error: e }))
           } else
+          //tem filtro para o titulo
             if (req.body[0]['titulo'] != undefined) { //com filtro para o titulo
-              console.log("filtro titulo ", req.body[0]['titulo'])
               Recurso.getAllFollowWithName(followList.followers,req.body[0]['titulo'])
                 .then(dados => res.status(200).jsonp(dados))
                 .catch(e => res.status(501).jsonp({ error: e }))
             } else
+            //tem filtro para o tipo
               if (req.body[0]['tipo'] != undefined) { //com filtro para tipo
-                console.log("sem filtros")
                 Recurso.getAllFollowWithTipo(followList.followers,req.body[0]['tipo'])
                   .then(dados => res.status(200).jsonp(dados))
                   .catch(e => res.status(501).jsonp({ error: e }))
               }
         } else {
-          console.log("sem filtros")
           Recurso.getAllFollow(followList.followers)
             .then(dados => {
-              console.log("COISAS")
-              console.log(dados)
               res.status(200).jsonp(dados)
             })
             .catch(e => res.status(501).jsonp({ error: e }))
@@ -214,26 +205,20 @@ router.post('/alteraAuthor/:id', function (req, res) {
 });
 
 
-//Obtem a classicação de um recurso VOU TER DE DAR JOIN DISTO
+//Obtem a classicação de um recurso 
 router.post('/classifica/:id', function (req, res) {
-  console.log(req.params.id)
-  console.log(req.body)
   Classificacao.getClassificacaoAll(req.params.id)
     .then(dados => {
-      console.log(dados)
-      console.log("Adiciona a classifcação1")
-      console.log(parseInt(dados.numClassif))
-      var classifi = parseInt((parseInt(dados.numClassif) * parseInt(dados.classificacao)) + parseInt(req.body.classificacao) / (parseInt(dados.numClassif) + 1))
-      console.log(classifi)
-      Classificacao.giveClassificacao(req.params.id, classifi, req.user._id)
+      var classifiMedia = dados[0].numClassif * dados[0].classificacao
+      var classifiMediaMaisNova =  parseInt(classifiMedia) + parseInt(req.body.classificacao) 
+      var classifiFinal = parseInt(classifiMediaMaisNova) / ((dados[0].numClassif) + 1)
+      Classificacao.giveClassificacao(req.params.id, classifiFinal, req.user._id)
         .then(dadosR => {
           console.log("Adiciona a classifcação2")
           res.status(200).jsonp(dadosR)
-          //res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
         })
         .catch(e => res.status(501).jsonp({ error: e }))
     })
-    //res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
     .catch(e => res.status(501).jsonp({ error: e }))
 
 });
@@ -242,11 +227,8 @@ router.post('/classifica/:id', function (req, res) {
 //remove um conteudo
 //apenas quem criou ou o admin o pode fazer
 router.get('/remove/:id', function (req, res) {
-  console.log(req.params.id)
   Recurso.getRecurso(req.params.id)
     .then(dados => {
-      console.log(dados[0].user)
-      console.log(req.user._id)
       if (dados[0].user == req.user._id || req.user.level == 'admin') {
         Recurso.removeRecurso(req.params.id, req.user._id)
           .then(dados => res.status(200).jsonp(dados))
@@ -278,35 +260,28 @@ router.get('/recupera/:id', function (req, res) {
 });
 
 
+//Ver um recurso, ao fazer isto pode ver o conteudo,os comentários e a classificação
 router.get('/:id', function (req, res) {
-  console.log("entra no get user by id")
-  console.log(req.params.id)
   Recurso.getRecursoAgr(req.params.id)
     .then(dados => {
-      console.log("print")
-      console.log(dados)
       if (dados[0].user == req.user._id || req.user.level == 'admin') {
-        console.log("é o dono")
+        //se for admin ou o dono pode ver tudo incluido estando apagado ou ou privado
         res.status(200).jsonp(dados)
       } else
         if (dados[0].public == true && dados[0].deleted == false) {
-          console.log("é public")
+          //se estiver publico e não eliminado qq um pode ver
           res.status(200).jsonp(dados)
         } else
           if (dados[0].public == false) {
-            console.log("é o privado")
-            User.getFollowers(req.user._id)
+            //se estiver privado só se estiver a seguir é que pode ver
+            User.getFollowing(req.user._id)
               .then(dadosRec => {
-                console.log("aqui é os followers")
-                console.log(dadosRec)
-                if (dadosRec[0].contains(dados[0].user)) {
+                if (dadosRec.followers.includes(dados[0].user)) {
                   res.status(200).jsonp(dados)
                 } else
                   res.status(401).jsonp({ error: "Não tem premissões premissões, falar com o Admin" })
               })
               .catch(e => res.status(501).jsonp({ error: e }))
-
-            //res.status(200).jsonp(dados)
           }
     })
     .catch(e => res.status(501).jsonp({ error: e }))

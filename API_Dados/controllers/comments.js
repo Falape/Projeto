@@ -3,14 +3,12 @@ var mongoose = require("mongoose");
 ObjectId = require('mongodb').ObjectId;
 
 module.exports.inserir = comment => {
-    console.log("aqui")
     var data = new Date()
     comment.data = data.toISOString().substring(0, 16)
     comment.deleted=false
     comment.deleteDate = ''
     comment.deleteUser = ''
     var newComment = new Comments(comment)
-    console.log(newComment)
     return newComment.save()
 }
 
@@ -19,8 +17,6 @@ module.exports.inserir = comment => {
 //do user e manter o seu id
 module.exports.GetComment = id => {
     id = ObjectId(id)
-    console.log("controller GetComment")
-    console.log(id)
     return Comments
         .aggregate([
             {$match : {_id:id}},
@@ -42,7 +38,7 @@ module.exports.GetComment = id => {
 module.exports.GetCommentsRecurso = id => {
     return Comments
         .aggregate([
-            {$match : {recurso:id, deleted: { $eq: false } }},
+            {$match : {recurso:id}},
             {$lookup: {
                 let: {"userId": {"$toObjectId": "$user"}}, 
                 from : "users", 
@@ -59,6 +55,9 @@ module.exports.GetCommentsRecurso = id => {
 //fazer agregação com os users para obter o nome 
 //do user e manter o seu id
 module.exports.GetCommentsRecursoAdmin = id => {
+    if(typeof id == 'string'){
+        id=ObjectId(id)
+    }
     return Comments
         .aggregate([
             {$match : {recurso:id}},
@@ -72,7 +71,7 @@ module.exports.GetCommentsRecursoAdmin = id => {
                 let: {"deleteUserId": {"$toObjectId": "$deleteUser"}}, 
                 from : "users", 
                 pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$deleteUserId"]}}}], 
-                as : "deleteUser"
+                as : "deleteUsers"
             }},
             {$sort : {data : 1}}
         ])
@@ -85,26 +84,6 @@ module.exports.GetNumberOfcommentsRecurso = id => {
         .count()
         .exec()
 }
-
-
-//DONE
-//fazer agregação com os users para obter o nome 
-//do user e manter o seu id
-module.exports.GetCommentsRecurso = id => {
-    return Comments
-        .aggregate([
-            {$match : {recurso:id, deleted: { $eq: false }}},
-            {$lookup: {
-                let: {"userId": {"$toObjectId": "$user"}}, 
-                from : "users", 
-                pipeline: [{"$match": {"$expr": { "$eq": [ "$_id", "$$userId"]}}}], 
-                as : "utilizador"
-            }},
-            {$sort : {data : 1}}
-        ])
-        .exec()
-}
-
 
 //fazer agregação com a collection recursos para 
 //que seja ordenado pelo titulo do recurso e não 
@@ -122,7 +101,6 @@ module.exports.GetCommentsUser = id => {
 
 //não se apagam dados :) apenas não os mostramos ;)
 module.exports.removeComment = (id, user) =>{
-    console.log("string")
     id = ObjectId(id)
     var data = new Date()
     return Comments
@@ -130,8 +108,7 @@ module.exports.removeComment = (id, user) =>{
 }
 
 module.exports.recuperaComment = id =>{
-    console.log("string")
     id = ObjectId(id)
     return Comments
-        .updateOne({ _id:  id},{deleted:false, deleteDate:'', deleteUser:''}); 
+        .updateOne({ _id:  id},{deleted:false, deleteDate:'', deleteUser:'aaaaaaaaaaaaaaaaaaaaaaaa'}); 
 }

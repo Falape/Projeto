@@ -79,37 +79,39 @@ module.exports.getFollowers = id => {
         .exec()
 }
 
+module.exports.getFollowersListIds = id => {
+    return User
+        .find({followers: id}, {_id:1})
+        .exec()
+}
+
+
 
 //EDITAR Users
 module.exports.alterarImagem = (id,path) =>{
-    console.log("string")
     return User
         .updateOne({ _id:  id},{image:path});
 }
 
 module.exports.alterarDescricao = (id,desc) =>{
-    console.log("string")
     return User
         .updateOne({ _id:  id},{descricao:desc});  
 }
 
 module.exports.alterarLevel = (id,lvl) =>{
-    console.log("string")
     return User
         .updateOne({ _id:  id},{level:lvl}); 
 }
 
 //adiciona um follower ao user
 module.exports.addFollower = (id,follower) =>{
-    console.log("string")
+
     return User
         .updateOne({ _id:  id},{ $addToSet: {followers: follower}}); 
 }
 
 //update fulll list of followers FAZER
 module.exports.unFollower = (id,followers) =>{
-    console.log("string")
-    console.log(followers)
     id = ObjectId(id)
     return User
         .updateOne({ _id:  id},{followers: followers}); 

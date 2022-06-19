@@ -5,17 +5,11 @@ const Recurso = require('../controllers/recurso')
 const User = require('../controllers/user')
 
 //Fazer um commentário
-//Tenho de pensar melhor, o id do recusro pode ir no body(Melhor)
-//para bullet proof verificar se o userID do token é o mesmo que vai 
-//no body
 router.post('/:id', function (req, res) {
-    console.log("entra no post com o res: ");
     req.body.user = req.user._id
     req.body.recurso = req.params.id
-    console.log(req.body)
     Comments.inserir(req.body)
         .then(dados => {
-            console.log(dados)//req.body)
             res.status(201).jsonp(dados);
         })
         .catch(e => {
@@ -26,17 +20,17 @@ router.post('/:id', function (req, res) {
 
 //obtem comentários de um recurso
 router.get('/recurso/:id', function (req, res) {
-    console.log("entra no comments par o id:")
-    console.log(req.params.id)
     if (req.user.level == 'admin') {
-        Comments.GetCommentsRecursoAdmin(req.params.id)
-            .then(dados => res.status(200).jsonp(dados))
+        console.log("entra aqui")
+        Comments.GetCommentsRecurso(req.params.id)
+            .then(dados => {
+                console.log(dados)
+                res.status(200).jsonp(dados)})
             .catch(e => res.status(501).jsonp({ error: e }))
 
     } else {
         Comments.GetCommentsRecurso(req.params.id)
             .then(dados => {
-                console.log(dados)
                 res.status(200).jsonp(dados)
             })
             .catch(e => res.status(501).jsonp({ error: e }))
@@ -46,16 +40,12 @@ router.get('/recurso/:id', function (req, res) {
 
 //remove um comentário
 router.get('/remove/:id', function (req, res) {
-    console.log("chega a route remove commente")
-    console.log(req.params.id)
+
     Comments.GetComment(req.params.id)
         .then(dados => {
-            console.log(dados)
             if (dados[0].user == req.user._id | req.user.level == 'admin') {
-                console.log('entrada2')
                 Comments.removeComment(req.params.id, req.user._id)
                     .then(dadosR => {
-                        console.log("dadosR")
                         res.status(200).jsonp(dadosR)})
                     .catch(e => res.status(501).jsonp({ error: e }))
             }else
@@ -67,11 +57,8 @@ router.get('/remove/:id', function (req, res) {
 
 //Talvez não deva recuperar comments
 router.get('/recuperar/:id', function (req, res) {
-    console.log(req.params.id)
     Comments.getRecurso(req.params.id)
         .then(dados => {
-            console.log(dados[0].user)
-            console.log(req.user._id)
             if (dados[0].deleteUser == req.user._id || req.user.level == 'admin') {
                 Recurso.removeRecurso(req.params.id, req.user._id)
                     .then(dados => res.status(200).jsonp(dados))
@@ -85,7 +72,6 @@ router.get('/recuperar/:id', function (req, res) {
 
 //procurar comment especifico
 router.get('/:id', function (req, res) {
-    console.log(req.params.id)
     Comments.GetComment(req.params.id)
         .then(dados => res.status(200).jsonp(dados))
         .catch(e => res.status(501).jsonp({ error: e }))

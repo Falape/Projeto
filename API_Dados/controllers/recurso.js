@@ -406,5 +406,5 @@ module.exports.removeRecurso = (id, user) => {
 //recupera recurso
 module.exports.recuperaRecurso = (id) => {
     return Recurso
-        .updateOne({ _id: id }, { deleted: false, deleteDate: '', deleteUser: '' });  //mongoose.Types.ObjectId(id)
+        .updateOne({ _id: id }, { deleted: false, deleteDate: '', deleteUser: 'aaaaaaaaaaaaaaaaaaaaaaaa' });  //mongoose.Types.ObjectId(id)
 }

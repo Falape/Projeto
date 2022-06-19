@@ -15,39 +15,31 @@ var storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 router.get('/new', function (req, res) {
-    console.log("ENTREI NO NOVO RECURSO1")
-    console.log(req.cookies.data.userData.id)
+
     res.render('novo_recurso', { navbar: req.cookies.data.userData, userId: req.cookies.data.userData.id})
 })
 
 router.post('/new', upload.single('path'), function (req, res) {
-    console.log("ENTREI NO NOVO RECURSO2")
-    console.log(req.file)
-    console.log(req.body)
+
     if(req.body.public == "true"){
         req.body.public = true
     }
     else{
         req.body.public = false
     }
-    console.log(req.body)
     verification.verifyFile(req.file.path).then(verf => {
-        console.log(verf)
+
         if (verf){
             storing.StoreSIP(req.file.path).then((x)=>{
-                //console.log("FINAL DIR =======================================> ", x)
                 req.body.path = x
-                console.log(req.body)
                 axios.post('http://localhost:7002/recursos?token=' + req.cookies.data.token, req.body)
                 .then(dados => {
-                    console.log(dados.data)
                     res.redirect('/inicio')
                 })
                 .catch(e => res.render('error', { error: e }))
             })
         }
         else{
-            //render pagina de erro ??? --- quando chega aqui falha na verificação do .zip
             res.redirect('new')
         }
     })
@@ -55,26 +47,9 @@ router.post('/new', upload.single('path'), function (req, res) {
 })
 
 
-
-router.get('/deleteRecurso/:id', function (req, res) {
-
-    console.log(req.body)
-    axios.get('http://localhost:7002/recursos/remove/' + req.params.id + '?token=' + req.cookies.data.token, req.body)
-    .then(dados => {
-        console.log(dados.data)
-        res.redirect('/users/' + req.query.recurso)
-    })
-    .catch(e => res.render('error', { error: e }))
-})
-
-
-
 router.post('/classifica/:id', function (req, res) {
-    
-    console.log(req.body)
     axios.post('http://localhost:7002/recursos/classifica/' + req.params.id + '?token=' + req.cookies.data.token, req.body)
     .then(dados => {
-        console.log(dados.data)
         res.redirect('/recursos/' + req.params.id)
     })
     .catch(e => res.render('error', { error: e }))
@@ -84,7 +59,6 @@ router.post('/classifica/:id', function (req, res) {
 router.get('/deleteRecurso/:id', function (req, res) {
     axios.get('http://localhost:7002/recursos/remove/' + req.params.id + '?token=' + req.cookies.data.token)
         .then(dados => {
-            console.log(dados.data)
             res.redirect('/users/' + req.query.user)
         })
         .catch(e => res.render('error', { error: e }))
@@ -94,7 +68,7 @@ router.get('/recuperarRecurso/:id', function (req, res) {
     axios.get('http://localhost:7002/recursos/recupera/' + req.params.id + '?token=' + req.cookies.data.token)
         .then(dados => {
             console.log(dados.data)
-            res.redirect('/' + req.params.id)
+            res.redirect('/recursos/' + req.params.id)
         })
         .catch(e => res.render('error', { error: e }))
 })
@@ -102,8 +76,6 @@ router.get('/recuperarRecurso/:id', function (req, res) {
 router.get('/download/:id', function (req, res) {
     axios.get('http://localhost:7002/recursos/' + req.params.id + '?token=' + req.cookies.data.token)
     .then(dados => {
-        console.log("VER AQUUIIIIIIIIIII")
-        console.log(dados.data[0])
         var zip_name = ""
         var zip_files = fs.readdirSync(dados.data[0].path);
         for (fich in zip_files){
@@ -112,7 +84,6 @@ router.get('/download/:id', function (req, res) {
                 zip_name = zip_files[fich]
             }
         }
-        //download
         res.download(dados.data[0].path + '/' + zip_name)
     })
     .catch(e => res.render('error', { error: e }))
@@ -120,13 +91,11 @@ router.get('/download/:id', function (req, res) {
 
 
 router.get('/:id', function (req, res) {
-    console.log("entra")
-    console.log(req.cookies.data.token)
-    //axios.post('http://localhost:7002/recursos?token='+ req.cookies.data.token)
+
     axios.get('http://localhost:7002/recursos/' + req.params.id + '?token=' + req.cookies.data.token)
     .then(dados => {
-        console.log("VER AQUUIIIIIIIIIII")
-        console.log(dados.data[0])
+        // console.log("VER AQUUIIIIIIIIIII")
+        console.log(dados.data[0].classificacao)
         var zip_name = ""
         var files = fs.readdirSync(dados.data[0].path + '/unziped');
         var zip_files = fs.readdirSync(dados.data[0].path);
@@ -138,13 +107,12 @@ router.get('/:id', function (req, res) {
         }
         axios.get('http://localhost:7002/comments/recurso/' + req.params.id + '?token=' + req.cookies.data.token)
         .then(dadosRec => {
-            console.log("dados comments")
-            //console.log(dadosRec.data[0])
+            console.log(dadosRec.data)
             var flagQuemApagou
             if(dados.data[0].deletedUser == req.cookies.data.userData.id)
                 flagQuemApagou = 'dono'
             else 
-               if(dados.data[0].deleted == true && dados.data[0].deletedUtilizador.level == 'admin')
+               if(dados.data[0].deleted == true && dados.data[0].deleteUtilizador.level == 'admin')
 
                     flagQuemApagou = 'admin'
                 else
@@ -161,8 +129,6 @@ router.get('/:id', function (req, res) {
                 flagLevel = 'visitante'
             }
             res.render('recurso', { navbar: req.cookies.data.userData, userData: dados.data[0].utilizador[0], recurso: dados.data[0], flagLevel:flagLevel, comentarios:dadosRec.data, ficheiros: files, zip_name: zip_name, flagQuemApagou: flagQuemApagou })
-            // console.log("guarda")
-            // console.log(dados.data[0])//dados.data
         })
         })
         .catch(e => res.render('error', { error: e }))

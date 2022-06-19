@@ -50,7 +50,6 @@ block content
     table 
         tr 
             th Título
-            th User
             th Classificação
             th Data
         each r in recursos
@@ -58,9 +57,9 @@ block content
                 if r.public == true
                     tr 
                         td
-                            a(href="/recursos/"+r._id)= r.title
-                        td= user.username
-                        //td
+                            h4
+                                a(href="/recursos/"+r._id)= r.title
+                        td
                             if r.classificacao.length == 0
                                 p 0
                             else
@@ -71,23 +70,22 @@ block content
                 if flagSeguir=='seguindo' && flagLevel == 'visitante'
                     tr 
                         td
-                            a(href="/recursos/"+r._id)= r.title
-                        td= user.username
+                            h4
+                                a(href="/recursos/"+r._id)= r.title
                         td
                             if r.classificacao.length == 0
                                 p 0
                             else
                                 p= r.classificacao[0].classificacao 
                         td= r.data
-                        td
                     tr
                 else 
                     if flagLevel == 'admin' || flagLevel == 'dono'
                         if r.deleted==true
                             tr 
                                 td.deleted
-                                    a(href="/recursos/"+r._id)= r.title
-                                td.deleted= user.username
+                                    h4
+                                        a(href="/recursos/"+r._id)= r.title
                                 td.deleted
                                     if r.classificacao.length == 0
                                         p 0
@@ -98,8 +96,8 @@ block content
                         else
                             tr 
                                 td
-                                    a(href="/recursos/"+r._id)= r.title
-                                td= user.username
+                                    h4
+                                        a(href="/recursos/"+r._id)= r.title
                                 td
                                     if r.classificacao.length == 0
                                         p 0
