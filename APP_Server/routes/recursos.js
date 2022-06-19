@@ -67,7 +67,6 @@ router.get('/deleteRecurso/:id', function (req, res) {
 router.get('/recuperarRecurso/:id', function (req, res) {
     axios.get('http://localhost:7002/recursos/recupera/' + req.params.id + '?token=' + req.cookies.data.token)
         .then(dados => {
-            console.log(dados.data)
             res.redirect('/recursos/' + req.params.id)
         })
         .catch(e => res.render('error', { error: e }))
@@ -94,8 +93,6 @@ router.get('/:id', function (req, res) {
 
     axios.get('http://localhost:7002/recursos/' + req.params.id + '?token=' + req.cookies.data.token)
     .then(dados => {
-        // console.log("VER AQUUIIIIIIIIIII")
-        console.log(dados.data[0].classificacao)
         var zip_name = ""
         var files = fs.readdirSync(dados.data[0].path + '/unziped');
         var zip_files = fs.readdirSync(dados.data[0].path);
@@ -107,7 +104,6 @@ router.get('/:id', function (req, res) {
         }
         axios.get('http://localhost:7002/comments/recurso/' + req.params.id + '?token=' + req.cookies.data.token)
         .then(dadosRec => {
-            console.log(dadosRec.data)
             var flagQuemApagou
             if(dados.data[0].deletedUser == req.cookies.data.userData.id)
                 flagQuemApagou = 'dono'
