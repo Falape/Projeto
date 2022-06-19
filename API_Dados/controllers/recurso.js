@@ -94,7 +94,7 @@ module.exports.getMyRec = id => {
 module.exports.getRecFromUser = id => {
     return Recurso
         .aggregate([
-            {$match : {user:id, deleted: { $eq: false }}},
+            {$match : {user:id}},
             { "$addFields": { "stringId": { "$toString": "$_id" }}},
             {$lookup: {
                 from : "classifications", 
@@ -117,9 +117,18 @@ module.exports.getRecFromUser = id => {
 //obtem todos os recursos publicos que um user publicou 
 module.exports.getRecFromUserPublic = id => {
     return Recurso
-        .find({user:id,  public: { $eq: true }, deleted: { $eq: false }})
-        .sort({ data: 1 })
-        .exec()
+    .aggregate([
+        {$match : {user:id, deleted: { $eq: false }}},
+        { "$addFields": { "stringId": { "$toString": "$_id" }}},
+        {$lookup: {
+            from : "classifications", 
+            localField: "stringId", 
+            foreignField: "recurso", 
+            as : "classificacao"
+        }},
+        {$sort : {data : 1}}
+    ])
+    .exec()
 }
 
 

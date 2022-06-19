@@ -2,8 +2,15 @@ extends layout
 
 block content
     div.container
-        
-    h1 Informação do utilizador: 
+    div.row
+        h1 Informação do utilizador: 
+            if flagSeguir == 'NaoSeguindo' && flagLevel != 'dono'
+                a(href="http://localhost:7003/users/follow/"+ user._id)
+                        button(class = 'tertiary') Seguir
+            else if flagSeguir == 'seguindo' && flagLevel != 'dono'
+                a(href="http://localhost:7003/users/unfollow/"+ user._id)
+                        button(class = 'secondary') Deixar de Seguir
+
     if flagLevel == 'admin' || flagLevel == 'dono'
         //a(href="http://localhost:7003/users/delete/"+ user._id)
             button(class = 'secondary') ELIMINAR CONTA
@@ -16,7 +23,7 @@ block content
     div.container
         div.row
             div
-                input(type="image" src=user.path  width="80" height="80" )
+                input(type="image" src=user.image  width="90" height="90" )
             div
                 p
                     b Username:   
@@ -47,14 +54,56 @@ block content
             th Classificação
             th Data
         each r in recursos
-            tr 
-                td
-                    a(href="/recursos/"+r._id)= r.title
-                td= user.username
-                //td
-                    if r.classificacao.length == 0
-                        p 0
-                    else
-                        p= r.classificacao[0].classificacao 
-                td= r.data
-            tr
+            if flagSeguir=='NaoSeguindo' && flagLevel == 'visitante'
+                if r.public == true
+                    tr 
+                        td
+                            a(href="/recursos/"+r._id)= r.title
+                        td= user.username
+                        //td
+                            if r.classificacao.length == 0
+                                p 0
+                            else
+                                p= r.classificacao[0].classificacao 
+                        td= r.data
+                    tr
+            else 
+                if flagSeguir=='seguindo' && flagLevel == 'visitante'
+                    tr 
+                        td
+                            a(href="/recursos/"+r._id)= r.title
+                        td= user.username
+                        td
+                            if r.classificacao.length == 0
+                                p 0
+                            else
+                                p= r.classificacao[0].classificacao 
+                        td= r.data
+                        td
+                    tr
+                else 
+                    if flagLevel == 'admin' || flagLevel == 'dono'
+                        if r.deleted==true
+                            tr 
+                                td.deleted
+                                    a(href="/recursos/"+r._id)= r.title
+                                td.deleted= user.username
+                                td.deleted
+                                    if r.classificacao.length == 0
+                                        p 0
+                                    else
+                                        p= r.classificacao[0].classificacao 
+                                td.deleted Apagado a #{r.deleteDate}
+                            tr
+                        else
+                            tr 
+                                td
+                                    a(href="/recursos/"+r._id)= r.title
+                                td= user.username
+                                td
+                                    if r.classificacao.length == 0
+                                        p 0
+                                    else
+                                        p= r.classificacao[0].classificacao 
+                                td= r.data
+                            tr

@@ -71,11 +71,11 @@ router.get('/userRecurso/:id', function (req, res) {
   console.log("ENTREI111")
   User.getUser(req.user._id)
     .then(dados => {
-      if (dados.followers.includes(req.params.id) || req.user.level == 'admin') {
+      if (req.user._id==req.params.id || req.user.level == 'admin') {
         Recurso.getRecFromUser(req.params.id)
-          .then(dados => {
-            console.log(dados)
-            res.status(200).jsonp(dados)
+          .then(dadosR => {
+            console.log(dadosR)
+            res.status(200).jsonp(dadosR)
           })
           .catch(e => res.status(502).jsonp({ error: e }))
       } else {
@@ -308,7 +308,7 @@ router.get('/recupera/:id', function (req, res) {
 
 
 router.get('/:id', function (req, res) {
-  console.log("entra")
+  console.log("entra no get user by id")
   console.log(req.params.id)
   Recurso.getRecursoAgr(req.params.id)
     .then(dados => {
@@ -324,7 +324,7 @@ router.get('/:id', function (req, res) {
         } else
           if (dados[0].public == false) {
             console.log("é o privado")
-            User.getFollwers(req.user._id)
+            User.getFollowers(req.user._id)
               .then(dadosRec => {
                 console.log("aqui é os followers")
                 console.log(dadosRec)
@@ -335,7 +335,7 @@ router.get('/:id', function (req, res) {
               })
               .catch(e => res.status(501).jsonp({ error: e }))
 
-            res.status(200).jsonp(dados)
+            //res.status(200).jsonp(dados)
           }
     })
     .catch(e => res.status(501).jsonp({ error: e }))

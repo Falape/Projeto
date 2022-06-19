@@ -59,7 +59,7 @@ router.get('/public', function (req, res) {
       res.render('public', { navbar: req.cookies.data.userData, recursos: dados.data, title:'Feed Publico' })
     })
     .catch(e => res.render('error', { error: e }))
-});
+}); 
 
 router.get('/inicio', function (req, res) {
   console.log("entra")

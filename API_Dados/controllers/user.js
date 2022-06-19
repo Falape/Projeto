@@ -108,6 +108,7 @@ module.exports.addFollower = (id,follower) =>{
 module.exports.unFollower = (id,followers) =>{
     console.log("string")
     console.log(followers)
+    id = ObjectId(id)
     return User
         .updateOne({ _id:  id},{followers: followers}); 
 }

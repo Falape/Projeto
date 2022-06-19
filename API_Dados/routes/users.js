@@ -99,6 +99,8 @@ router.get('/getFollowers/:id', function (req, res) {
         .catch(e => res.status(501).jsonp({ error: e }))
 });
 
+
+//Obtem users que um User está a seguir
 router.get('/getFollowing/:id', function (req, res) {
     console.log("chega ao getFollowing")
     console.log(req.params.id)
@@ -112,23 +114,28 @@ router.get('/getFollowing/:id', function (req, res) {
 
 //remove um follower
 router.get('/unFollow/:id', function (req, res) {
-    console.log(req.params.id)
-    console.log(req.user._id)
+    //console.log(req.params.id)
+    //console.log(req.user._id)
     User.getUser(req.user._id)
         .then(dados => {
-            console.log("morre aqui")
+            //console.log("morre aqui")
             if (dados.followers.includes(req.params.id)) {
-                console.log('entra')
-                ind = foll.indexOf(req.params.id)
-                console.log(ind) 
+                //console.log('entra')
+                var foll = dados.followers
+                //console.log(foll.indexOf(req.params.id))
+                var ind = foll.indexOf(req.params.id)
+                //console.log(ind) 
 
                 foll.splice(ind, 1)
-                console.log(foll)
+                //console.log(foll)
                 User.unFollower(req.user._id, foll)
-                    .then(dadosRec => res.status(200).jsonp(dadosRec))
+                    .then(dadosRec => {
+                        //console.log("erro aqui")
+                        //console.log(dadosRec)
+                        res.status(200).jsonp(dadosRec)})
                     .catch(e => res.status(501).jsonp({ error: e }))
-            }
-            res.status(401).jsonp({ error: "Utilizador não existe!" })
+            }else
+                res.status(401).jsonp({ error: "Utilizador não existe!" })
         })
         .catch(e => res.status(501).jsonp({ error: e }))
 });
